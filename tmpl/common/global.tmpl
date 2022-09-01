@@ -1,0 +1,24 @@
+package common
+
+import (
+	"gorm.io/gorm"
+    "github.com/go-redis/redis/v8"
+)
+
+type TransformerOptions struct {
+	Include []string `json:"includes"`
+	Guarded []string `json:"guarded"`
+	Role    string   `json:"role"`
+}
+
+type Paginate struct {
+	CurrentPage int64 `json:"current_page"`
+	PerPage     int64 `json:"per_page"`
+	Total       int64 `json:"total"`
+	TotalPage   int64 `json:"total_page"`
+}
+
+var (
+	DB *gorm.DB
+	RD *redis.Client
+)

@@ -1,0 +1,74 @@
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+    "log"
+	"{{.ModuleName}}/app/api"
+	"{{.ModuleName}}/app/common"
+	"{{.ModuleName}}/app/middleware"
+	"{{.ModuleName}}/app/migrate"
+	"github.com/nashlibby/gutils"
+)
+
+func main() {
+
+	// 获取配置
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal("Error: Fail to load config")
+	}
+
+	// 获取mysql配置
+	mysqlConfig := common.MysqlConfig{
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetInt("db.port"),
+		Username: viper.GetString("db.username"),
+		Password: viper.GetString("db.password"),
+		Database: viper.GetString("db.database"),
+	}
+
+	// 获取redis配置
+	redisConfig := common.RedisConfig{
+		Host:     viper.GetString("redis.host"),
+		Port:     viper.GetInt("redis.port"),
+		Password: viper.GetString("redis.password"),
+		Db:       viper.GetInt("redis.db"),
+	}
+
+	// 初始化数据库
+	common.InitMysql(mysqlConfig)
+	// 数据迁移
+	migrate.Run()
+	// 数据生成
+	migrate.Seed()
+    // 初始化redis
+    common.InitRedis(redisConfig)
+
+	// 启动api
+	r := gin.Default()
+	gin.SetMode(viper.GetString("app.mode"))
+
+	// 中间件
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(middleware.CORS())
+	r.Use(gutils.LoggerToFile())
+
+	// 路由分组
+	v1 := r.Group("api/v1")
+
+	// 心跳
+	v1.GET("ping", api.Ping)
+
+	// 添加其它路由
+	// router.UserRouter(v1)
+
+	// 启动监听
+	err = r.Run(":" + viper.GetString("app.port"))
+	if err != nil {
+		panic(err)
+	}
+
+}

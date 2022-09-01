@@ -1,0 +1,23 @@
+package common
+
+import (
+	"github.com/go-redis/redis/v8"
+	"strconv"
+)
+
+type RedisConfig struct {
+	Host     string
+	Port     int
+	Password string
+	Db       int
+}
+
+func InitRedis(redisConfig RedisConfig) {
+	client := redis.NewClient(&redis.Options{
+		Addr:     redisConfig.Host + ":" + strconv.Itoa(redisConfig.Port),
+		Password: redisConfig.Password,
+		DB:       redisConfig.Db,
+	})
+
+	RD = client
+}

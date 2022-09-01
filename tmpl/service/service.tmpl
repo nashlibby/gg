@@ -1,0 +1,114 @@
+package service
+
+import (
+	"github.com/nashlibby/gutils"
+	"math"
+	"{{.AppName}}/app/common"
+	"{{.AppName}}/app/internal/dao/model"
+	"{{.AppName}}/app/internal/dao/repository"
+	"{{.AppName}}/app/internal/dao/transformer"
+)
+
+type {{.ModuleName | FirstUpper}}Service struct {
+	{{.ModuleName | FirstUpper}}Repository *repository.{{.ModuleName | FirstUpper}}Repository
+}
+
+func New{{.ModuleName | FirstUpper}}Service() *{{.ModuleName | FirstUpper}}Service {
+	return &{{.ModuleName | FirstUpper}}Service{ {{.ModuleName | FirstUpper}}Repository: repository.New{{.ModuleName | FirstUpper}}Repository()}
+}
+
+// 根据id查找{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) FindById(id string) (tData *transformer.{{.ModuleName | FirstUpper}}Data, err error) {
+	{{.ModuleName}}Data, err := m.{{.ModuleName | FirstUpper}}Repository.Find("id = ?", []interface{}{id})
+	if err != nil {
+		return
+	}
+
+	tData, _ = transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
+	return
+}
+
+// 查找{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) Find(query map[string]map[string]interface{}) (tData *transformer.{{.ModuleName | FirstUpper}}Data, err error) {
+	whereSql, values, _ := gutils.WhereBuilder(query)
+	{{.ModuleName}}Data, err := m.{{.ModuleName | FirstUpper}}Repository.Find(whereSql, values)
+	if err != nil {
+		return
+	}
+
+	tData, _ = transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
+	return
+}
+
+// 获取{{.ModuleText}}列表
+func (m *{{.ModuleName | FirstUpper}}Service) Get(query map[string]map[string]interface{}, {{.ModuleName}}By ...string) (tList []*transformer.{{.ModuleName | FirstUpper}}Data, err error) {
+	whereSql, values, _ := gutils.WhereBuilder(query)
+	var ob string
+	if len({{.ModuleName}}By) > 0 {
+		ob = {{.ModuleName}}By[0]
+	} else {
+		ob = "created_at desc"
+	}
+
+	{{.ModuleName}}List, err := m.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, 0, 1000, ob)
+	if err != nil {
+		return
+	}
+
+	return transformer.New{{.ModuleName | FirstUpper}}Transformer().ToList({{.ModuleName}}List)
+}
+
+// 获取{{.ModuleText}}列表&&分页
+func (m *{{.ModuleName | FirstUpper}}Service) GetPaginate(query map[string]map[string]interface{}, page, perPage int64, {{.ModuleName}}By ...string) (tList []*transformer.{{.ModuleName | FirstUpper}}Data, paginate common.Paginate, err error) {
+	whereSql, values, _ := gutils.WhereBuilder(query)
+	var ob string
+	if len({{.ModuleName}}By) > 0 {
+		ob = {{.ModuleName}}By[0]
+	} else {
+		ob = "created_at desc"
+	}
+	{{.ModuleName}}List, err := m.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, (page-1)*perPage, perPage, ob)
+	if err != nil {
+		return
+	}
+	count, err := m.{{.ModuleName | FirstUpper}}Repository.Count(whereSql, values)
+	if err != nil {
+		return
+	}
+	paginate = common.Paginate{
+		CurrentPage: page,
+		PerPage:     perPage,
+		Total:       count,
+		TotalPage:   int64(math.Ceil(float64(count) / float64(perPage))),
+	}
+
+	tList, _ = transformer.New{{.ModuleName | FirstUpper}}Transformer().ToList({{.ModuleName}}List)
+	return
+}
+
+// 创建{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) Create({{.ModuleName | FirstUpper}} *model.{{.ModuleName | FirstUpper}}) error {
+	return m.{{.ModuleName | FirstUpper}}Repository.Create({{.ModuleName | FirstUpper}})
+}
+
+// 根据id更新{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) UpdateById(id string, data map[string]interface{}) error {
+	return m.{{.ModuleName | FirstUpper}}Repository.Update("id = ?", []interface{}{id}, data)
+}
+
+// 更新{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) Update(query map[string]map[string]interface{}, data map[string]interface{}) error {
+	whereSql, values, _ := gutils.WhereBuilder(query)
+	return m.{{.ModuleName | FirstUpper}}Repository.Update(whereSql, values, data)
+}
+
+// 根据id删除{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) DeleteById(id string) error {
+	return m.{{.ModuleName | FirstUpper}}Repository.Delete("id = ?", []interface{}{id})
+}
+
+// 删除{{.ModuleText}}
+func (m *{{.ModuleName | FirstUpper}}Service) Delete(query map[string]map[string]interface{}) error {
+	whereSql, values, _ := gutils.WhereBuilder(query)
+	return m.{{.ModuleName | FirstUpper}}Repository.Delete(whereSql, values)
+}

@@ -1,0 +1,16 @@
+package api
+
+import (
+	"github.com/gin-gonic/gin"
+	"strconv"
+	"github.com/nashlibby/gutils"
+	"time"
+)
+
+// 心跳
+func Ping(c *gin.Context) {
+	gutils.GinSuccess(c, 200, "请求成功", map[string]string{
+		"status":    "up",
+		"timestamp": strconv.Itoa(int(time.Now().Unix())),
+	})
+}

@@ -1,0 +1,47 @@
+package transformer
+
+import (
+	"{{.AppName}}/app/internal/dao/model"
+	"github.com/nashlibby/gutils"
+	"{{.AppName}}/app/common"
+)
+
+type {{.ModuleName | FirstUpper}}Transformer struct {
+	Options *common.TransformerOptions
+}
+
+// 输出数据结构
+type {{.ModuleName | FirstUpper}}Data struct {
+	Id        string `json:"id"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+func New{{.ModuleName | FirstUpper}}Transformer(opts ...common.TransformerOptions) *{{.ModuleName | FirstUpper}}Transformer {
+	if len(opts) > 0 {
+		return &{{.ModuleName | FirstUpper}}Transformer{Options: &opts[0]}
+	} else {
+		return &{{.ModuleName | FirstUpper}}Transformer{Options: nil}
+	}
+}
+
+// {{.ModuleText}}数据转换
+func (a *{{.ModuleName | FirstUpper}}Transformer) ToData({{.ModuleName}}Data *model.{{.ModuleName | FirstUpper}}) (tData *{{.ModuleName | FirstUpper}}Data, err error) {
+	err = gutils.Scan({{.ModuleName}}Data, &tData)
+	return
+}
+
+// {{.ModuleText}}列表转换
+func (a *{{.ModuleName | FirstUpper}}Transformer) ToList({{.ModuleName}}List []*model.{{.ModuleName | FirstUpper}}) (tList []*{{.ModuleName | FirstUpper}}Data, err error) {
+	if len({{.ModuleName}}List) > 0 {
+		for _, {{.ModuleName}} := range {{.ModuleName}}List {
+			tData, err := a.ToData({{.ModuleName}})
+			if err != nil {
+				return nil, err
+			}
+			tList = append(tList, tData)
+		}
+	}
+
+	return
+}
