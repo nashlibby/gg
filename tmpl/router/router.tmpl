@@ -2,12 +2,13 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"member/app/api"
+	"{{.AppName}}/app/api"
+    "{{.AppName}}/app/middleware"
 )
 
 // {{.ModuleText}}路由
 func {{.ModuleName | FirstUpper}}Router(r1 *gin.RouterGroup) {
-	r := r1.Group("/{{.ModuleName}}")
+	r := r1.Group("/{{.ModuleName}}").Use(middleware.Auth())
 	{
 		// 获取{{.ModuleText}}列表接口
 		r.GET("", api.{{.ModuleName | FirstUpper}}Index)

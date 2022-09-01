@@ -1,0 +1,104 @@
+package api
+
+import (
+	"context"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	"github.com/nashlibby/gutils"
+	"{{.AppName}}/app/common"
+	"time"
+)
+
+// 注册请求
+type RegisterRequest struct {
+	Name    string `json:"name" binding:"required"`
+	Phone   string `json:"phone" binding:"required"`
+	Captcha string `json:"captcha" binding:"required"`
+}
+
+// 注册
+func Register(c *gin.Context) {
+	var request RegisterRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		gutils.GinFail(c, 500, "param invalid: "+err.Error())
+		return
+	}
+
+	// TODO 注册逻辑
+
+	// 生成token
+	accessToken, err := genToken(request.Phone, 2)
+	if err != nil {
+		gutils.GinFail(c, 500, err.Error())
+		return
+	}
+
+	// 保存token到redis
+	err = common.RD.Set(context.Background(), accessToken, "USER_ID", time.Hour*48).Err()
+	if err != nil {
+		gutils.GinFail(c, 500, err.Error())
+		return
+	}
+
+	gutils.GinSuccess(c, 200, "注册成功", map[string]interface{}{
+		"token": map[string]interface{}{
+			"token_type":   "Bearer",
+			"access_token": accessToken,
+			"expires_in":   3600 * 48,
+		},
+	})
+}
+
+// 登录请求
+type LoginRequest struct {
+	Phone     string `json:"phone" binding:"required"`
+	Password  string `json:"password" binding:"required"`
+	LoginType string `json:"login_type" binding:"required"`
+}
+
+// 登录
+func Login(c *gin.Context) {
+	var request LoginRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		gutils.GinFail(c, 500, "param invalid: "+err.Error())
+		return
+	}
+
+	// TODO 登录逻辑
+
+	// 生成token
+	accessToken, err := genToken(request.Phone, 2)
+	if err != nil {
+		gutils.GinFail(c, 500, err.Error())
+		return
+	}
+
+	// 保存token到redis
+	err = common.RD.Set(context.Background(), accessToken, "USER_ID", time.Hour*48).Err()
+	if err != nil {
+		gutils.GinFail(c, 500, err.Error())
+		return
+	}
+
+	gutils.GinSuccess(c, 200, "登录成功", map[string]interface{}{
+		"token": map[string]interface{}{
+			"token_type":   "Bearer",
+			"access_token": accessToken,
+			"expires_in":   3600 * 48,
+		},
+	})
+}
+
+// 生成token
+func genToken(salt string, expiredDays int) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"iat": time.Now().Unix(),                            // 签发时间
+		"exp": time.Now().AddDate(0, 0, expiredDays).Unix(), // 到期时间
+	})
+	accessToken, err := token.SignedString([]byte(salt))
+	if err != nil {
+		return "", err
+	} else {
+		return accessToken, nil
+	}
+}

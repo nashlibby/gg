@@ -33,6 +33,7 @@ func main() {
 					}
 					data := Data{
 						ModuleType: "project",
+						AppName:    cCtx.String("name"),
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
 						Port:       cCtx.String("port"),

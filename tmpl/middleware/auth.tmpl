@@ -1,0 +1,32 @@
+package middleware
+
+import (
+	"context"
+	"github.com/gin-gonic/gin"
+	"github.com/nashlibby/gutils"
+	"{{.AppName}}/app/common"
+	"strings"
+)
+
+// 鉴权中间件
+func Auth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := strings.Split(c.GetHeader("Authorization"), " ")
+		if len(authHeader) != 2 || authHeader[0] != "Bearer" {
+			gutils.GinFail(c, 500, "token非法")
+			c.Abort()
+			return
+		}
+
+		userId, err := common.RD.Get(context.Background(), authHeader[1]).Result()
+		if err != nil {
+			gutils.GinFail(c, 500, "无权限访问")
+			c.Abort()
+			return
+		}
+
+		c.Set("user_id", userId)
+		c.Next()
+		return
+	}
+}

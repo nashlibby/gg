@@ -103,16 +103,13 @@ func GetAppName() string {
 
 // 生成项目
 func (g *Generator) GenProject() {
-	g.GenMain()
-}
-
-// 生成main
-func (g *Generator) GenMain() {
 	_ = exec.Command("bash", "-c", "go mod init "+g.Data.ModuleName).Run()
 	g.ParseTemplate("main/main.tmpl", "main.go")
 	g.GenApi("ping")
+	g.GenApi("auth")
 	g.GenCommon()
 	g.GenMiddleware("cors")
+	g.GenMiddleware("auth")
 	g.GenMigrate()
 	g.GenGitignore()
 	g.GenConfig()
@@ -133,7 +130,7 @@ func (g *Generator) GenModule() {
 
 // 生成api
 func (g *Generator) GenApi(tmplName string) {
-	if tmplName == "ping" {
+	if tmplName == "ping" || tmplName == "auth" {
 		g.ParseTemplate("api/"+tmplName+".tmpl", "app/api/"+tmplName+".go")
 	} else {
 		g.ParseTemplate("api/api.tmpl", "app/api/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
