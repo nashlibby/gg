@@ -57,7 +57,7 @@ func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 		log.Fatalf("Error: Could not format processed template: %v\n", err)
 	}
 	outputPath := "./" + outputFile
-	if exist, _ := gutils.PathExists(outputPath); !exist || g.ForceMode {
+	if exist, _ := gutils.FileExists(outputPath); !exist || g.ForceMode {
 		log.Println("Generate file: ", outputPath)
 		f, err := os.OpenFile(outputPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 		defer f.Close()
@@ -103,6 +103,7 @@ func GetAppName() string {
 
 // 生成项目
 func (g *Generator) GenProject() {
+	log.Println("Run: go mod init " + g.Data.ModuleName)
 	_ = exec.Command("bash", "-c", "go mod init "+g.Data.ModuleName).Run()
 	g.ParseTemplate("main/main.tmpl", "main.go")
 	g.GenApi("ping")
@@ -115,6 +116,7 @@ func (g *Generator) GenProject() {
 	g.GenConfig()
 	g.GenDeploy()
 	g.GenMakeFile()
+	log.Println("Run: go mod tidy")
 	_ = exec.Command("bash", "-c", "go mod tidy").Run()
 }
 
@@ -139,7 +141,16 @@ func (g *Generator) GenApi(tmplName string) {
 
 // 生成model
 func (g *Generator) GenModel() {
-	g.ParseTemplate("dao/model.tmpl", "app/internal/dao/model/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	outputFile := "app/internal/dao/model/" + gutils.Camel2Case(g.Data.ModuleName) + ".go"
+	g.ParseTemplate("dao/model.tmpl", outputFile)
+	// 添加migrate
+	content := "\t_ = common.DB.AutoMigrate(model." + gutils.FirstUpper(g.Data.ModuleName) + "{})"
+	if exists, _ := gutils.StringExistsInFile("./app/migrate/migrate.go", content); !exists {
+		err := gutils.InsertOneLineToFile("./app/migrate/migrate.go", content, "func Run() {")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 // 生成repository
@@ -169,6 +180,14 @@ func (g *Generator) GenMiddleware(tmplName string) {
 // 生成router
 func (g *Generator) GenRouter() {
 	g.ParseTemplate("router/router.tmpl", "app/router/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	// 添加router
+	content := "\trouter." + gutils.FirstUpper(g.Data.ModuleName) + "Router(v1)"
+	if exists, _ := gutils.StringExistsInFile("./main.go", content); !exists {
+		err := gutils.InsertOneLineToFile("./main.go", content, "// 添加其它路由")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 // 生成logic
@@ -196,7 +215,7 @@ func (g *Generator) GenMigrate() {
 
 // 生成gitignore
 func (g *Generator) GenGitignore() {
-	if exist, _ := gutils.PathExists(".gitignore"); !exist || g.ForceMode {
+	if exist, _ := gutils.FileExists(".gitignore"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile(".gitignore", []byte(fmt.Sprintf(`# Binaries for programs and plugins
 *.exe
 *.exe~
@@ -219,7 +238,7 @@ deploy.sh
 
 // 生成config
 func (g *Generator) GenConfig() {
-	if exist, _ := gutils.PathExists("config.yaml"); !exist || g.ForceMode {
+	if exist, _ := gutils.FileExists("config.yaml"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile("config.yaml", []byte(fmt.Sprintf(`app:
   name: %s
   port: %s
@@ -244,7 +263,7 @@ redis:
 
 // 生成deploy
 func (g *Generator) GenDeploy() {
-	if exist, _ := gutils.PathExists("deploy.sh.example"); !exist || g.ForceMode {
+	if exist, _ := gutils.FileExists("deploy.sh.example"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile("deploy.sh.example", []byte(fmt.Sprintf(`#!/bin/sh
 git pull origin master
 make build docker
@@ -258,7 +277,7 @@ docker-compose up -d app-%s
 
 // 生成makefile
 func (g *Generator) GenMakeFile() {
-	if exist, _ := gutils.PathExists("Makefile"); !exist || g.ForceMode {
+	if exist, _ := gutils.FileExists("Makefile"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile("Makefile", []byte(fmt.Sprintf(`.PHONY: build
 build:
 	@env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on GOPROXY=https://goproxy.cn go build -o %s *.go

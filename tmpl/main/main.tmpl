@@ -63,7 +63,6 @@ func main() {
 	v1.GET("ping", api.Ping)
 
 	// 添加其它路由
-	// router.UserRouter(v1)
 
 	// 启动监听
 	err = r.Run(":" + viper.GetString("app.port"))
