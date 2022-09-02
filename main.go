@@ -49,6 +49,7 @@ func main() {
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
 					&cli.BoolFlag{Name: "force", Value: false, Aliases: []string{"f"}},
+					&cli.BoolFlag{Name: "auth", Value: false, Aliases: []string{"u"}},
 				},
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.String("name") == "" {
@@ -58,6 +59,7 @@ func main() {
 						ModuleType: "module",
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
+						NeedAuth:   cCtx.Bool("auth"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenModule()
 					return nil
@@ -217,6 +219,7 @@ func main() {
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
 					&cli.BoolFlag{Name: "force", Value: false, Aliases: []string{"f"}},
+					&cli.BoolFlag{Name: "auth", Value: false, Aliases: []string{"u"}},
 				},
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.String("name") == "" {
@@ -226,6 +229,7 @@ func main() {
 						ModuleType: "module",
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
+						NeedAuth:   cCtx.Bool("auth"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenRouter()
 					return nil

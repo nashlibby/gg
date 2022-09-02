@@ -62,7 +62,7 @@ func main() {
 	// 心跳
 	v1.GET("ping", api.Ping)
 
-	// 添加其它路由
+	// 路由
 
 	// 启动监听
 	err = r.Run(":" + viper.GetString("app.port"))

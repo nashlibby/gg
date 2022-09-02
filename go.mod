@@ -3,13 +3,13 @@ module github.com/nashlibby/gg
 go 1.18
 
 require (
-	github.com/nashlibby/gutils v0.0.0-20220902040459-aa5770b13668
+	github.com/nashlibby/gutils v0.0.0-20220902065554-a99388aad556
 	github.com/urfave/cli/v2 v2.11.2
 )
 
 require (
 	github.com/BurntSushi/toml v1.2.0 // indirect
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1754 // indirect
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1755 // indirect
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.5+incompatible // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
 	github.com/bitly/go-simplejson v0.5.0 // indirect

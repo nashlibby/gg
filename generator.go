@@ -22,6 +22,7 @@ type Data struct {
 	ModuleType string
 	ModuleName string
 	ModuleText string
+	NeedAuth   bool
 }
 
 type Generator struct {
@@ -144,11 +145,36 @@ func (g *Generator) GenModel() {
 	outputFile := "app/internal/dao/model/" + gutils.Camel2Case(g.Data.ModuleName) + ".go"
 	g.ParseTemplate("dao/model.tmpl", outputFile)
 	// 添加migrate
+	migrateFilePath := "./app/migrate/migrate.go"
 	content := "\t_ = common.DB.AutoMigrate(model." + gutils.FirstUpper(g.Data.ModuleName) + "{})"
-	if exists, _ := gutils.StringExistsInFile("./app/migrate/migrate.go", content); !exists {
-		err := gutils.InsertOneLineToFile("./app/migrate/migrate.go", content, "func Run() {")
+	if exists, _ := gutils.StringExistsInFile(migrateFilePath, content); !exists {
+		err := gutils.InsertOneLineToFile(migrateFilePath, content, "func Run() {")
 		if err != nil {
 			log.Fatal(err)
+		}
+	}
+
+	if exists, _ := gutils.StringExistsInFile(migrateFilePath, "import"); !exists {
+		includeText := fmt.Sprintf(`import (
+	"%s/app/common"
+	"%s/app/internal/dao/model"
+)`, g.Data.AppName, g.Data.AppName)
+		err := gutils.InsertOneLineToFile(migrateFilePath, includeText, "package migrate")
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		if exists, _ := gutils.StringExistsInFile(migrateFilePath, "app/common"); !exists {
+			err := gutils.InsertOneLineToFile(migrateFilePath, fmt.Sprintf(`"%s/app/common"`, g.Data.AppName), "import (")
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		if exists, _ := gutils.StringExistsInFile(migrateFilePath, "app/internal/dao/model"); !exists {
+			err := gutils.InsertOneLineToFile(migrateFilePath, fmt.Sprintf(`"%s/app/internal/dao/model"`, g.Data.AppName), "import (")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
@@ -183,7 +209,13 @@ func (g *Generator) GenRouter() {
 	// 添加router
 	content := "\trouter." + gutils.FirstUpper(g.Data.ModuleName) + "Router(v1)"
 	if exists, _ := gutils.StringExistsInFile("./main.go", content); !exists {
-		err := gutils.InsertOneLineToFile("./main.go", content, "// 添加其它路由")
+		err := gutils.InsertOneLineToFile("./main.go", content, "// 路由")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	if exists, _ := gutils.StringExistsInFile("./main.go", "app/router"); !exists {
+		err := gutils.InsertOneLineToFile("./main.go", fmt.Sprintf(`	"%s/app/router"`, g.Data.AppName), "import (")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -249,7 +281,7 @@ db:
   port: 3306
   username: root
   password: root
-  database: mysql
+  database: app
 redis:
   host: 127.0.0.1
   port: 6379
