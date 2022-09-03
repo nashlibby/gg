@@ -23,6 +23,17 @@ type Data struct {
 	ModuleName string
 	ModuleText string
 	NeedAuth   bool
+	ModelField ModelField
+}
+
+type ModelField struct {
+	Name    string
+	Model   string
+	Declare string
+	Type    string
+	Comment string
+	Json    string
+	Output  bool
 }
 
 type Generator struct {
@@ -43,7 +54,8 @@ func NewGenerator(data Data, forceMode bool) *Generator {
 // 解析模板输出
 func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 	funcMap := template.FuncMap{
-		"FirstUpper": gutils.FirstUpper,
+		"FirstUpper":  gutils.FirstUpper,
+		"FirstLetter": FirstLetter,
 	}
 	tmpl := template.Must(template.New("").Funcs(funcMap).ParseFS(Templates, "tmpl/"+tmplFile))
 	var processed bytes.Buffer
@@ -78,6 +90,11 @@ func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 		_, _ = w.WriteString(string(formatted))
 		_ = w.Flush()
 	}
+}
+
+// 首小写字母
+func FirstLetter(str string) string {
+	return strings.ToLower(string([]byte(str)[0]))
 }
 
 // 获取应用名称
@@ -117,8 +134,6 @@ func (g *Generator) GenProject() {
 	g.GenConfig()
 	g.GenDeploy()
 	g.GenMakeFile()
-	log.Println("Run: go mod tidy")
-	_ = exec.Command("bash", "-c", "go mod tidy").Run()
 }
 
 // 生成模块
@@ -209,7 +224,7 @@ func (g *Generator) GenRouter() {
 	// 添加router
 	content := "\trouter." + gutils.FirstUpper(g.Data.ModuleName) + "Router(v1)"
 	if exists, _ := gutils.StringExistsInFile("./main.go", content); !exists {
-		err := gutils.InsertOneLineToFile("./main.go", content, "// 路由")
+		err := gutils.InsertOneLineToFile("./main.go", content, "// 添加路由")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -229,7 +244,8 @@ func (g *Generator) GenLogic() {
 
 // 生成biz
 func (g *Generator) GenBiz() {
-	g.ParseTemplate("biz/biz.tmpl", "app/internal/biz/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	fileName := gutils.Camel2Case(g.Data.ModuleName)
+	g.ParseTemplate("biz/biz.tmpl", "app/internal/biz/"+fileName+"/"+fileName+".go")
 }
 
 // 生成common
@@ -243,6 +259,33 @@ func (g *Generator) GenCommon() {
 func (g *Generator) GenMigrate() {
 	g.ParseTemplate("migrate/migrate.tmpl", "app/migrate/migrate.go")
 	g.ParseTemplate("migrate/seed.tmpl", "app/migrate/seed.go")
+}
+
+// 生成model field
+func (g *Generator) GenField() {
+	field := g.Data.ModelField
+	modelFilePath := "app/internal/dao/model/" + gutils.Camel2Case(g.Data.ModelField.Model) + ".go"
+	if exists, err := gutils.FileExists(modelFilePath); exists && err == nil {
+		content := fmt.Sprintf("\t%s %s `gorm:\"type:%scomment:%s\" json:\"%s\"`", field.Name, field.Declare, field.Type, field.Comment, field.Json)
+		err := gutils.InsertOneLineToFile(modelFilePath, content, "gutils.FieldTime", "before")
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		log.Fatal("Error: not find model")
+	}
+	if field.Output {
+		transformerFilePath := "app/internal/dao/transformer/" + gutils.Camel2Case(g.Data.ModelField.Model) + ".go"
+		if exists, err := gutils.FileExists(transformerFilePath); exists && err == nil {
+			content := fmt.Sprintf("\t%s %s `json:\"%s\"`", field.Name, field.Declare, field.Json)
+			err := gutils.InsertOneLineToFile(transformerFilePath, content, "CreatedAt", "before")
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			log.Fatal("Error: not find transformer")
+		}
+	}
 }
 
 // 生成gitignore
@@ -281,7 +324,7 @@ db:
   port: 3306
   username: root
   password: root
-  database: app
+  database: dbname
 redis:
   host: 127.0.0.1
   port: 6379

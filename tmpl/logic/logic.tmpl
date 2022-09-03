@@ -1,0 +1,40 @@
+package logic
+
+import (
+    "gorm.io/gorm"
+    "{{.AppName}}/app/common"
+    "{{.AppName}}/app/internal/dao/model"
+    "{{.AppName}}/app/internal/dao/repository"
+)
+
+type {{.ModuleName | FirstUpper}}Logic struct {
+	{{.ModuleName | FirstUpper}}Repository *repository.{{.ModuleName | FirstUpper}}Repository
+}
+
+func New{{.ModuleName | FirstUpper}}Logic() *{{.ModuleName | FirstUpper}}Logic {
+	return &{{.ModuleName | FirstUpper}}Logic{ {{.ModuleName | FirstUpper}}Repository: repository.New{{.ModuleName | FirstUpper}}Repository()}
+}
+
+// 创建{{.ModuleText}}
+func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Logic) Create() error {
+	return common.DB.Transaction(func(tx *gorm.DB) error {
+		// 创建{{.ModuleText}}事务逻辑
+		return nil
+	})
+}
+
+// 更新{{.ModuleText}}
+func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Logic) Update() error {
+	return common.DB.Transaction(func(tx *gorm.DB) error {
+		// 更新{{.ModuleText}}事务逻辑
+		return nil
+	})
+}
+
+// 删除{{.ModuleText}}
+func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Logic) Delete() error {
+	return common.DB.Transaction(func(tx *gorm.DB) error {
+		// 删除{{.ModuleText}}事务逻辑
+		return nil
+	})
+}

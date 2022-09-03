@@ -1,0 +1,115 @@
+package {{.ModuleName}}
+
+import (
+	"encoding/json"
+	"errors"
+	"github.com/go-resty/resty/v2"
+	"strconv"
+)
+
+type {{ .ModuleName | FirstUpper }} struct {
+	Client *resty.Client
+	Config Config
+}
+
+type Config struct {
+	Host        string
+	AppId       string
+	Secret      string
+	CallbackUrl string
+}
+
+type Response struct {
+}
+
+func New(config Config) *{{ .ModuleName | FirstUpper }} {
+	return &{{ .ModuleName | FirstUpper }}{
+		Client: resty.New(),
+		Config: config,
+	}
+}
+
+func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) Get() (response Response, err error) {
+	url := ""
+	query := make(map[string]string)
+
+	resp, err := {{ .ModuleName | FirstLetter }}.Client.R().
+		SetHeader("Authorization", "").
+		SetQueryParams(query).
+		Get({{ .ModuleName | FirstLetter }}.Config.Host + url)
+	if err != nil {
+		err = errors.New("请求错误: " + err.Error())
+		return
+	}
+
+	if resp.StatusCode() != 200 {
+		err = errors.New("请求错误 HTTP: " + strconv.Itoa(resp.StatusCode()))
+		return
+	}
+
+	err = json.Unmarshal(resp.Body(), &response)
+	if err != nil {
+		err = errors.New("响应解析失败: " + string(resp.Body()))
+		return
+	}
+
+	return
+}
+
+func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) PostForm() (response Response, err error) {
+	url := ""
+	query := make(map[string]string)
+	data := make(map[string]string)
+
+	resp, err := {{ .ModuleName | FirstLetter }}.Client.R().
+		SetHeader("Authorization", "").
+		SetQueryParams(query).
+		SetFormData(data).
+		Post({{ .ModuleName | FirstLetter }}.Config.Host + url)
+	if err != nil {
+		err = errors.New("请求错误: " + err.Error())
+		return
+	}
+
+	if resp.StatusCode() != 200 {
+		err = errors.New("请求错误 HTTP: " + strconv.Itoa(resp.StatusCode()))
+		return
+	}
+
+	err = json.Unmarshal(resp.Body(), &response)
+	if err != nil {
+		err = errors.New("响应解析失败: " + string(resp.Body()))
+		return
+	}
+
+	return
+}
+
+func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) PostJson() (response Response, err error) {
+	url := ""
+	query := make(map[string]string)
+	body := make(map[string]string)
+
+	resp, err := {{ .ModuleName | FirstLetter }}.Client.R().
+		SetHeader("Authorization", "").
+		SetQueryParams(query).
+		SetBody(body).
+		Post({{ .ModuleName | FirstLetter }}.Config.Host + url)
+	if err != nil {
+		err = errors.New("请求错误: " + err.Error())
+		return
+	}
+
+	if resp.StatusCode() != 200 {
+		err = errors.New("请求错误 HTTP: " + strconv.Itoa(resp.StatusCode()))
+		return
+	}
+
+	err = json.Unmarshal(resp.Body(), &response)
+	if err != nil {
+		err = errors.New("响应解析失败: " + string(resp.Body()))
+		return
+	}
+
+	return
+}

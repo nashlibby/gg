@@ -13,6 +13,7 @@ type {{.ModuleName | FirstUpper}}Transformer struct {
 // 输出数据结构
 type {{.ModuleName | FirstUpper}}Data struct {
 	Id        string `json:"id"`
+	State     int8   `json:"state"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
@@ -26,13 +27,13 @@ func New{{.ModuleName | FirstUpper}}Transformer(opts ...common.TransformerOption
 }
 
 // {{.ModuleText}}数据转换
-func (a *{{.ModuleName | FirstUpper}}Transformer) ToData({{.ModuleName}}Data *model.{{.ModuleName | FirstUpper}}) (tData *{{.ModuleName | FirstUpper}}Data, err error) {
+func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Transformer) ToData({{.ModuleName}}Data *model.{{.ModuleName | FirstUpper}}) (tData *{{.ModuleName | FirstUpper}}Data, err error) {
 	err = gutils.Scan({{.ModuleName}}Data, &tData)
 	return
 }
 
 // {{.ModuleText}}列表转换
-func (a *{{.ModuleName | FirstUpper}}Transformer) ToList({{.ModuleName}}List []*model.{{.ModuleName | FirstUpper}}) (tList []*{{.ModuleName | FirstUpper}}Data, err error) {
+func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Transformer) ToList({{.ModuleName}}List []*model.{{.ModuleName | FirstUpper}}) (tList []*{{.ModuleName | FirstUpper}}Data, err error) {
 	if len({{.ModuleName}}List) > 0 {
 		for _, {{.ModuleName}} := range {{.ModuleName}}List {
 			tData, err := a.ToData({{.ModuleName}})

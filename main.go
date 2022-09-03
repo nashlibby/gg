@@ -2,10 +2,10 @@ package main
 
 import (
 	"embed"
+	"github.com/urfave/cli/v2"
 	"log"
 	"os"
-
-	"github.com/urfave/cli/v2"
+	"os/exec"
 )
 
 //go:embed tmpl
@@ -16,11 +16,13 @@ func main() {
 	app := &cli.App{
 		Name:                   "A cli tool for generating go code with gin and gorm",
 		Usage:                  "Fast generate curd api code",
+		UsageText:              "gg command [command options] [arguments...]",
 		UseShortOptionHandling: true,
 		Commands: []*cli.Command{
 			{
-				Name:  "project",
-				Usage: "Init project",
+				Name:      "project",
+				Usage:     "Init project",
+				UsageText: "eg. gg project -a cms -t 内容管理系统 -p 8088 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "port", Value: "8080", Aliases: []string{"p"}},
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
@@ -39,12 +41,15 @@ func main() {
 						Port:       cCtx.String("port"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenProject()
+					log.Println("Run: go mod tidy")
+					_ = exec.Command("bash", "-c", "go mod tidy").Run()
 					return nil
 				},
 			},
 			{
-				Name:  "module",
-				Usage: "Generate module code",
+				Name:      "module",
+				Usage:     "Generate module code",
+				UsageText: "eg. gg module -a user -t 用户 -u -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -62,12 +67,15 @@ func main() {
 						NeedAuth:   cCtx.Bool("auth"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenModule()
+					log.Println("Run: go mod tidy")
+					_ = exec.Command("bash", "-c", "go mod tidy").Run()
 					return nil
 				},
 			},
 			{
-				Name:  "api",
-				Usage: "Generate api code",
+				Name:      "api",
+				Usage:     "Generate api code",
+				UsageText: "gg api -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -87,8 +95,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "model",
-				Usage: "Generate model code",
+				Name:      "model",
+				Usage:     "Generate model code",
+				UsageText: "gg model -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -108,8 +117,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "repository",
-				Usage: "Generate repository code",
+				Name:      "repository",
+				Usage:     "Generate repository code",
+				UsageText: "gg repository -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -129,8 +139,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "transformer",
-				Usage: "Generate transformer code",
+				Name:      "transformer",
+				Usage:     "Generate transformer code",
+				UsageText: "gg transformer -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -150,8 +161,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "logic",
-				Usage: "Generate logic code",
+				Name:      "logic",
+				Usage:     "Generate logic code",
+				UsageText: "gg logic -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -171,8 +183,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "service",
-				Usage: "Generate service code",
+				Name:      "service",
+				Usage:     "Generate service code",
+				UsageText: "gg logic -a service -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -192,8 +205,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "middleware",
-				Usage: "Generate middleware code",
+				Name:      "middleware",
+				Usage:     "Generate middleware code",
+				UsageText: "gg middleware -a auth -t 认证 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -213,8 +227,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "router",
-				Usage: "Generate router code",
+				Name:      "router",
+				Usage:     "Generate router code",
+				UsageText: "gg router -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -236,8 +251,9 @@ func main() {
 				},
 			},
 			{
-				Name:  "biz",
-				Usage: "Generate biz code",
+				Name:      "biz",
+				Usage:     "Generate biz code",
+				UsageText: "gg biz -a user -t 用户 -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -253,6 +269,62 @@ func main() {
 						ModuleText: cCtx.String("text"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenBiz()
+					return nil
+				},
+			},
+			{
+				Name:  "field",
+				Usage: "Generate field of model",
+				UsageText: `eg. gg field -m User -a UserName -d string -t "varchar(30);not null;" -c "用户名" -j user_name -o
+eg. gg field -m User -a Age -d uint8 -t "tinyint(3);unsigned;not null;default:0;" -c "年龄" -j age`,
+				Flags: []cli.Flag{
+					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
+					&cli.StringFlag{Name: "model", Aliases: []string{"m"}},
+					&cli.StringFlag{Name: "declare", Aliases: []string{"d"}},
+					&cli.StringFlag{Name: "type", Aliases: []string{"t"}},
+					&cli.StringFlag{Name: "comment", Aliases: []string{"c"}},
+					&cli.StringFlag{Name: "json", Aliases: []string{"j"}},
+					&cli.BoolFlag{Name: "output", Value: false, Aliases: []string{"o"}},
+				},
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.String("name") == "" {
+						log.Fatal("Error: The name of model field is required, please use the -a or --name flag to specify the name of model field")
+					}
+
+					if cCtx.String("model") == "" {
+						log.Fatal("Error: The name of model is required, please use the -m or --model flag to specify the name of model")
+					}
+
+					if cCtx.String("declare") == "" {
+						log.Fatal("Error: The field declare is required, please use the -d or --declare flag to specify the model field declare")
+					}
+
+					if cCtx.String("type") == "" {
+						log.Fatal("Error: The type of field is required, please use the -t or --type flag to specify the type of field")
+					}
+
+					if cCtx.String("comment") == "" {
+						log.Fatal("Error: The comment of field is required, please use the -c or --comment flag to specify the comment of field")
+					}
+
+					if cCtx.String("json") == "" {
+						log.Fatal("Error: The json declare of field is required, please use the -j or --json flag to specify the json declare of field")
+					}
+
+					data := Data{
+						ModuleType: "field",
+						ModelField: ModelField{
+							Name:    cCtx.String("name"),
+							Model:   cCtx.String("model"),
+							Declare: cCtx.String("declare"),
+							Type:    cCtx.String("type"),
+							Comment: cCtx.String("comment"),
+							Json:    cCtx.String("json"),
+							Output:  cCtx.Bool("output"),
+						},
+					}
+
+					NewGenerator(data, false).GenField()
 					return nil
 				},
 			},

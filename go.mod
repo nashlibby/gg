@@ -88,3 +88,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/gorm v1.23.8 // indirect
 )
+
+replace github.com/nashlibby/gutils => ../gutils
