@@ -55,7 +55,7 @@ func NewGenerator(data Data, forceMode bool) *Generator {
 func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 	funcMap := template.FuncMap{
 		"FirstUpper":  gutils.FirstUpper,
-		"FirstLetter": FirstLetter,
+		"FirstLetter": func(str string) string { return strings.ToLower(str[:1]) },
 	}
 	tmpl := template.Must(template.New("").Funcs(funcMap).ParseFS(Templates, "tmpl/"+tmplFile))
 	var processed bytes.Buffer
@@ -90,11 +90,6 @@ func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 		_, _ = w.WriteString(string(formatted))
 		_ = w.Flush()
 	}
-}
-
-// 首小写字母
-func FirstLetter(str string) string {
-	return strings.ToLower(string([]byte(str)[0]))
 }
 
 // 获取应用名称
@@ -206,7 +201,7 @@ func (g *Generator) GenTransformer() {
 
 // 生成service
 func (g *Generator) GenService() {
-	g.ParseTemplate("service/service.tmpl", "app/internal/service/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("service/service.tmpl", "app/service/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
 }
 
 // 生成middleware
