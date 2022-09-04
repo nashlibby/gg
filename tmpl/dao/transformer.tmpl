@@ -36,7 +36,7 @@ func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Transformer) To
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Transformer) ToList({{.ModuleName}}List []*model.{{.ModuleName | FirstUpper}}) (tList []*{{.ModuleName | FirstUpper}}Data, err error) {
 	if len({{.ModuleName}}List) > 0 {
 		for _, {{.ModuleName}} := range {{.ModuleName}}List {
-			tData, err := a.ToData({{.ModuleName}})
+			tData, err := {{.ModuleName | FirstLetter}}.ToData({{.ModuleName}})
 			if err != nil {
 				return nil, err
 			}

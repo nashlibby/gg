@@ -16,38 +16,38 @@ func New{{.ModuleName | FirstUpper}}Repository() *{{.ModuleName | FirstUpper}}Re
 
 // 数据迁移
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Migrate() error {
-	return m.db.AutoMigrate(model.{{.ModuleName | FirstUpper}}{})
+	return {{.ModuleName | FirstLetter}}.db.AutoMigrate(model.{{.ModuleName | FirstUpper}}{})
 }
 
 // 根据条件查找{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Find(query string, values []interface{}) ({{.ModuleName | FirstUpper}} *model.{{.ModuleName | FirstUpper}}, err error) {
-	err = m.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).First(&{{.ModuleName | FirstUpper}}).Error
+	err = {{.ModuleName | FirstLetter}}.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).First(&{{.ModuleName | FirstUpper}}).Error
 	return
 }
 
 // 根据条件获取{{.ModuleText}}列表
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Get(query string, values []interface{}, offset, limit int64, order string) ({{.ModuleName | FirstUpper}}List []*model.{{.ModuleName | FirstUpper}}, err error) {
-	err = m.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).Order(order).Offset(int(offset)).Limit(int(limit)).Find(&{{.ModuleName | FirstUpper}}List).Error
+	err = {{.ModuleName | FirstLetter}}.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).Order(order).Offset(int(offset)).Limit(int(limit)).Find(&{{.ModuleName | FirstUpper}}List).Error
 	return
 }
 
 // 获取{{.ModuleText}}总数
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Count(query string, values []interface{}) (count int64, err error) {
-	err = m.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).Count(&count).Error
+	err = {{.ModuleName | FirstLetter}}.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).Count(&count).Error
 	return
 }
 
 // 创建{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Create({{.ModuleName}} *model.{{.ModuleName | FirstUpper}}) error {
-	return m.db.Create({{.ModuleName}}).Error
+	return {{.ModuleName | FirstLetter}}.db.Create({{.ModuleName}}).Error
 }
 
 // 更新{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Update(query string, values []interface{}, data map[string]interface{}) error {
-	return m.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).Updates(data).Error
+	return {{.ModuleName | FirstLetter}}.db.Model(&model.{{.ModuleName | FirstUpper}}{}).Where(query, values...).Updates(data).Error
 }
 
 // 删除{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Repository) Delete(query string, values []interface{}) error {
-	return m.db.Where(query, values...).Delete(&model.{{.ModuleName | FirstUpper}}{}).Error
+	return {{.ModuleName | FirstLetter}}.db.Where(query, values...).Delete(&model.{{.ModuleName | FirstUpper}}{}).Error
 }
