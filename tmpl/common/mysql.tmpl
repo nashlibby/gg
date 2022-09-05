@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -20,7 +20,7 @@ type MysqlConfig struct {
 
 func InitMysql(mysqlConfig MysqlConfig) {
 	// 数据库日志
-	NewLogger := logger.New(log.New(gutils.Logger("mysql").Out, "\r\n", log.LstdFlags), logger.Config{
+	NewLogger := logger.New(log.New(gk.Logger("mysql").Out, "\r\n", log.LstdFlags), logger.Config{
 		SlowThreshold:             time.Second, // 慢 SQL 阈值
 		LogLevel:                  logger.Info, // 日志级别
 		IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound（记录未找到）错误

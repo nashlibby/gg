@@ -1,14 +1,14 @@
 package model
 
 import (
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 	"gorm.io/gorm"
 )
 
 type {{ .ModuleName | FirstUpper }} struct {
-	gutils.FieldId   `gorm:"embedded"`
+	gk.FieldId   `gorm:"embedded"`
 	State           int8   `gorm:"type:tinyint(3);unsigned;default:1;comment:开启状态 10=关闭 1=开启" json:"state"`
-	gutils.FieldTime `gorm:"embedded"`
+	gk.FieldTime `gorm:"embedded"`
 }
 
 func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) BeforeSave(tx *gorm.DB) (err error) {

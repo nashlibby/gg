@@ -2,7 +2,7 @@ package transformer
 
 import (
 	"{{.AppName}}/app/internal/dao/model"
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 	"{{.AppName}}/app/common"
 )
 
@@ -28,7 +28,7 @@ func New{{.ModuleName | FirstUpper}}Transformer(opts ...common.TransformerOption
 
 // {{.ModuleText}}数据转换
 func ({{.ModuleName | FirstLetter}} *{{.ModuleName | FirstUpper}}Transformer) ToData({{.ModuleName}}Data *model.{{.ModuleName | FirstUpper}}) (tData *{{.ModuleName | FirstUpper}}Data, err error) {
-	err = gutils.Scan({{.ModuleName}}Data, &tData)
+	err = gk.Scan({{.ModuleName}}Data, &tData)
 	return
 }
 

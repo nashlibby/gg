@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"{{.AppName}}/app/internal/dao/model"
 	"{{.AppName}}/app/service"
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 )
 
 // {{.ModuleText}}列表接口
@@ -19,11 +19,11 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 
 	{{.ModuleName}}List, paginate, err := service.New{{.ModuleName | FirstUpper}}Service().GetPaginate(query, int64(page), int64(size))
 	if err != nil {
-		gutils.GinFail(c, 500, err.Error())
+		gk.GinFail(c, 500, err.Error())
 		return
 	}
 
-	gutils.GinSuccess(c, 200, "获取成功", map[string]interface{}{
+	gk.GinSuccess(c, 200, "获取成功", map[string]interface{}{
 		"{{.ModuleName}}_list": {{.ModuleName}}List,
 		"paginate":     paginate,
 	})
@@ -34,11 +34,11 @@ func {{.ModuleName | FirstUpper}}Show(c *gin.Context) {
 	id := c.Param("id")
 	{{.ModuleName}}Data, err := service.New{{.ModuleName | FirstUpper}}Service().FindById(id)
 	if err != nil {
-		gutils.GinFail(c, 500, "{{.ModuleText}}不存在")
+		gk.GinFail(c, 500, "{{.ModuleText}}不存在")
 		return
 	}
 
-	gutils.GinSuccess(c, 200, "获取成功", map[string]interface{}{
+	gk.GinSuccess(c, 200, "获取成功", map[string]interface{}{
 		"{{.ModuleName}}": {{.ModuleName}}Data,
 	})
 }
@@ -51,7 +51,7 @@ type Create{{.ModuleName | FirstUpper}}Request struct {
 func Create{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	var request Create{{.ModuleName | FirstUpper}}Request
 	if err := c.ShouldBindJSON(&request); err != nil {
-		gutils.GinFail(c, 500, "参数错误: "+err.Error())
+		gk.GinFail(c, 500, "参数错误: "+err.Error())
 		return
 	}
 
@@ -59,12 +59,12 @@ func Create{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	{{.ModuleName}} := model.{{.ModuleName | FirstUpper}}{}
     err := {{.ModuleName}}Service.Create(&{{.ModuleName}})
     if err != nil {
-        gutils.GinFail(c, 500, "创建失败: "+err.Error())
+        gk.GinFail(c, 500, "创建失败: "+err.Error())
         return
     }
 
 	{{.ModuleName}}Data, _ := {{.ModuleName}}Service.FindById({{.ModuleName}}.Id)
-	gutils.GinSuccess(c, 200, "创建成功", map[string]interface{}{
+	gk.GinSuccess(c, 200, "创建成功", map[string]interface{}{
 		"{{.ModuleName}}": {{.ModuleName}}Data,
 	})
 }
@@ -77,26 +77,26 @@ type Update{{.ModuleName | FirstUpper}}Request struct {
 func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	var request Update{{.ModuleName | FirstUpper}}Request
 	if err := c.ShouldBindJSON(&request); err != nil {
-		gutils.GinFail(c, 500, "参数错误: "+err.Error())
+		gk.GinFail(c, 500, "参数错误: "+err.Error())
 		return
 	}
 	id := c.Param("id")
     {{.ModuleName}}Service := service.New{{.ModuleName | FirstUpper}}Service()
 	_, err := {{.ModuleName}}Service.FindById(id)
 	if err != nil {
-		gutils.GinFail(c, 500, "{{.ModuleText}}不存在")
+		gk.GinFail(c, 500, "{{.ModuleText}}不存在")
 		return
 	}
 
     data := map[string]interface{}{}
 	err = {{.ModuleName}}Service.UpdateById(id, data)
 	if err != nil {
-		gutils.GinFail(c, 500, "{{.ModuleText}}更新失败: "+err.Error())
+		gk.GinFail(c, 500, "{{.ModuleText}}更新失败: "+err.Error())
 		return
 	}
 
 	{{.ModuleName}}Data, _ := {{.ModuleName}}Service.FindById(id)
-	gutils.GinSuccess(c, 200, "更新成功", map[string]interface{}{
+	gk.GinSuccess(c, 200, "更新成功", map[string]interface{}{
 		"{{.ModuleName}}": {{.ModuleName}}Data,
 	})
 }
@@ -107,14 +107,14 @@ func Delete{{.ModuleName | FirstUpper}}(c *gin.Context) {
     {{.ModuleName}}Service := service.New{{.ModuleName | FirstUpper}}Service()
 	_, err := {{.ModuleName}}Service.FindById(id)
 	if err != nil {
-		gutils.GinFail(c, 500, "{{.ModuleText}}不存在")
+		gk.GinFail(c, 500, "{{.ModuleText}}不存在")
 		return
 	}
 	err = {{.ModuleName}}Service.DeleteById(id)
 	if err != nil {
-		gutils.GinFail(c, 500, "删除失败")
+		gk.GinFail(c, 500, "删除失败")
 		return
 	}
 
-	gutils.GinSuccess(c, 200, "删除成功")
+	gk.GinSuccess(c, 200, "删除成功")
 }

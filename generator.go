@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 	"go/format"
 	"io/ioutil"
 	"log"
@@ -54,7 +54,7 @@ func NewGenerator(data Data, forceMode bool) *Generator {
 // 解析模板输出
 func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 	funcMap := template.FuncMap{
-		"FirstUpper":  gutils.FirstUpper,
+		"FirstUpper":  gk.FirstUpper,
 		"FirstLetter": func(str string) string { return strings.ToLower(str[:1]) },
 	}
 	tmpl := template.Must(template.New("").Funcs(funcMap).ParseFS(Templates, "tmpl/"+tmplFile))
@@ -70,7 +70,7 @@ func (g *Generator) ParseTemplate(tmplFile, outputFile string) {
 		log.Fatalf("Error: Could not format processed template: %v\n", err)
 	}
 	outputPath := "./" + outputFile
-	if exist, _ := gutils.FileExists(outputPath); !exist || g.ForceMode {
+	if exist, _ := gk.FileExists(outputPath); !exist || g.ForceMode {
 		log.Println("Generate file: ", outputPath)
 		f, err := os.OpenFile(outputPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 		defer f.Close()
@@ -146,42 +146,42 @@ func (g *Generator) GenApi(tmplName string) {
 	if tmplName == "ping" || tmplName == "auth" {
 		g.ParseTemplate("api/"+tmplName+".tmpl", "app/api/"+tmplName+".go")
 	} else {
-		g.ParseTemplate("api/api.tmpl", "app/api/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+		g.ParseTemplate("api/api.tmpl", "app/api/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 	}
 }
 
 // 生成model
 func (g *Generator) GenModel() {
-	outputFile := "app/internal/dao/model/" + gutils.Camel2Case(g.Data.ModuleName) + ".go"
+	outputFile := "app/internal/dao/model/" + gk.Camel2Case(g.Data.ModuleName) + ".go"
 	g.ParseTemplate("dao/model.tmpl", outputFile)
 	// 添加migrate
 	migrateFilePath := "./app/migrate/migrate.go"
-	content := "\t_ = common.DB.AutoMigrate(model." + gutils.FirstUpper(g.Data.ModuleName) + "{})"
-	if exists, _ := gutils.StringExistsInFile(migrateFilePath, content); !exists {
-		err := gutils.InsertOneLineToFile(migrateFilePath, content, "func Run() {")
+	content := "\t_ = common.DB.AutoMigrate(model." + gk.FirstUpper(g.Data.ModuleName) + "{})"
+	if exists, _ := gk.StringExistsInFile(migrateFilePath, content); !exists {
+		err := gk.InsertOneLineToFile(migrateFilePath, content, "func Run() {")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	if exists, _ := gutils.StringExistsInFile(migrateFilePath, "import"); !exists {
+	if exists, _ := gk.StringExistsInFile(migrateFilePath, "import"); !exists {
 		includeText := fmt.Sprintf(`import (
 	"%s/app/common"
 	"%s/app/internal/dao/model"
 )`, g.Data.AppName, g.Data.AppName)
-		err := gutils.InsertOneLineToFile(migrateFilePath, includeText, "package migrate")
+		err := gk.InsertOneLineToFile(migrateFilePath, includeText, "package migrate")
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		if exists, _ := gutils.StringExistsInFile(migrateFilePath, "app/common"); !exists {
-			err := gutils.InsertOneLineToFile(migrateFilePath, fmt.Sprintf(`"%s/app/common"`, g.Data.AppName), "import (")
+		if exists, _ := gk.StringExistsInFile(migrateFilePath, "app/common"); !exists {
+			err := gk.InsertOneLineToFile(migrateFilePath, fmt.Sprintf(`"%s/app/common"`, g.Data.AppName), "import (")
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
-		if exists, _ := gutils.StringExistsInFile(migrateFilePath, "app/internal/dao/model"); !exists {
-			err := gutils.InsertOneLineToFile(migrateFilePath, fmt.Sprintf(`"%s/app/internal/dao/model"`, g.Data.AppName), "import (")
+		if exists, _ := gk.StringExistsInFile(migrateFilePath, "app/internal/dao/model"); !exists {
+			err := gk.InsertOneLineToFile(migrateFilePath, fmt.Sprintf(`"%s/app/internal/dao/model"`, g.Data.AppName), "import (")
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -191,23 +191,23 @@ func (g *Generator) GenModel() {
 
 // 生成repository
 func (g *Generator) GenRepository() {
-	g.ParseTemplate("dao/repository.tmpl", "app/internal/dao/repository/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("dao/repository.tmpl", "app/internal/dao/repository/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 }
 
 // 生成transformer
 func (g *Generator) GenTransformer() {
-	g.ParseTemplate("dao/transformer.tmpl", "app/internal/dao/transformer/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("dao/transformer.tmpl", "app/internal/dao/transformer/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 }
 
 // 生成service
 func (g *Generator) GenService() {
-	g.ParseTemplate("service/service.tmpl", "app/service/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("service/service.tmpl", "app/service/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 }
 
 // 生成middleware
 func (g *Generator) GenMiddleware(tmplName string) {
 	if tmplName == "blank" {
-		g.ParseTemplate("middleware/blank.tmpl", "app/middleware/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+		g.ParseTemplate("middleware/blank.tmpl", "app/middleware/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 	} else {
 		g.ParseTemplate("middleware/"+tmplName+".tmpl", "app/middleware/"+tmplName+".go")
 	}
@@ -215,17 +215,17 @@ func (g *Generator) GenMiddleware(tmplName string) {
 
 // 生成router
 func (g *Generator) GenRouter() {
-	g.ParseTemplate("router/router.tmpl", "app/router/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("router/router.tmpl", "app/router/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 	// 添加router
-	content := "\trouter." + gutils.FirstUpper(g.Data.ModuleName) + "Router(v1)"
-	if exists, _ := gutils.StringExistsInFile("./main.go", content); !exists {
-		err := gutils.InsertOneLineToFile("./main.go", content, "// 添加路由")
+	content := "\trouter." + gk.FirstUpper(g.Data.ModuleName) + "Router(v1)"
+	if exists, _ := gk.StringExistsInFile("./main.go", content); !exists {
+		err := gk.InsertOneLineToFile("./main.go", content, "// 添加路由")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	if exists, _ := gutils.StringExistsInFile("./main.go", "app/router"); !exists {
-		err := gutils.InsertOneLineToFile("./main.go", fmt.Sprintf(`	"%s/app/router"`, g.Data.AppName), "import (")
+	if exists, _ := gk.StringExistsInFile("./main.go", "app/router"); !exists {
+		err := gk.InsertOneLineToFile("./main.go", fmt.Sprintf(`	"%s/app/router"`, g.Data.AppName), "import (")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -234,12 +234,12 @@ func (g *Generator) GenRouter() {
 
 // 生成logic
 func (g *Generator) GenLogic() {
-	g.ParseTemplate("logic/logic.tmpl", "app/internal/logic/"+gutils.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("logic/logic.tmpl", "app/internal/logic/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 }
 
 // 生成biz
 func (g *Generator) GenBiz() {
-	fileName := gutils.Camel2Case(g.Data.ModuleName)
+	fileName := gk.Camel2Case(g.Data.ModuleName)
 	g.ParseTemplate("biz/biz.tmpl", "app/internal/biz/"+fileName+"/"+fileName+".go")
 }
 
@@ -259,10 +259,10 @@ func (g *Generator) GenMigrate() {
 // 生成model field
 func (g *Generator) GenField() {
 	field := g.Data.ModelField
-	modelFilePath := "app/internal/dao/model/" + gutils.Camel2Case(g.Data.ModelField.Model) + ".go"
-	if exists, err := gutils.FileExists(modelFilePath); exists && err == nil {
+	modelFilePath := "app/internal/dao/model/" + gk.Camel2Case(g.Data.ModelField.Model) + ".go"
+	if exists, err := gk.FileExists(modelFilePath); exists && err == nil {
 		content := fmt.Sprintf("\t%s %s `gorm:\"type:%scomment:%s\" json:\"%s\"`", field.Name, field.Declare, field.Type, field.Comment, field.Json)
-		err := gutils.InsertOneLineToFile(modelFilePath, content, "gutils.FieldTime", "before")
+		err := gk.InsertOneLineToFile(modelFilePath, content, "gk.FieldTime", "before")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -270,10 +270,10 @@ func (g *Generator) GenField() {
 		log.Fatal("Error: not find model")
 	}
 	if field.Output {
-		transformerFilePath := "app/internal/dao/transformer/" + gutils.Camel2Case(g.Data.ModelField.Model) + ".go"
-		if exists, err := gutils.FileExists(transformerFilePath); exists && err == nil {
+		transformerFilePath := "app/internal/dao/transformer/" + gk.Camel2Case(g.Data.ModelField.Model) + ".go"
+		if exists, err := gk.FileExists(transformerFilePath); exists && err == nil {
 			content := fmt.Sprintf("\t%s %s `json:\"%s\"`", field.Name, field.Declare, field.Json)
-			err := gutils.InsertOneLineToFile(transformerFilePath, content, "CreatedAt", "before")
+			err := gk.InsertOneLineToFile(transformerFilePath, content, "CreatedAt", "before")
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -285,7 +285,7 @@ func (g *Generator) GenField() {
 
 // 生成gitignore
 func (g *Generator) GenGitignore() {
-	if exist, _ := gutils.FileExists(".gitignore"); !exist || g.ForceMode {
+	if exist, _ := gk.FileExists(".gitignore"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile(".gitignore", []byte(fmt.Sprintf(`# Binaries for programs and plugins
 *.exe
 *.exe~
@@ -308,7 +308,7 @@ deploy.sh
 
 // 生成config
 func (g *Generator) GenConfig() {
-	if exist, _ := gutils.FileExists("config.yaml"); !exist || g.ForceMode {
+	if exist, _ := gk.FileExists("config.yaml"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile("config.yaml", []byte(fmt.Sprintf(`app:
   name: %s
   port: %s
@@ -333,7 +333,7 @@ redis:
 
 // 生成deploy
 func (g *Generator) GenDeploy() {
-	if exist, _ := gutils.FileExists("deploy.sh.example"); !exist || g.ForceMode {
+	if exist, _ := gk.FileExists("deploy.sh.example"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile("deploy.sh.example", []byte(fmt.Sprintf(`#!/bin/sh
 git pull origin master
 make build docker
@@ -347,7 +347,7 @@ docker-compose up -d app-%s
 
 // 生成makefile
 func (g *Generator) GenMakeFile() {
-	if exist, _ := gutils.FileExists("Makefile"); !exist || g.ForceMode {
+	if exist, _ := gk.FileExists("Makefile"); !exist || g.ForceMode {
 		_ = ioutil.WriteFile("Makefile", []byte(fmt.Sprintf(`.PHONY: build
 build:
 	@env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on GOPROXY=https://goproxy.cn go build -o %s *.go

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 	"{{.AppName}}/app/common"
 	"time"
 )
@@ -20,7 +20,7 @@ type RegisterRequest struct {
 func Register(c *gin.Context) {
 	var request RegisterRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		gutils.GinFail(c, 500, "param invalid: "+err.Error())
+		gk.GinFail(c, 500, "param invalid: "+err.Error())
 		return
 	}
 
@@ -29,18 +29,18 @@ func Register(c *gin.Context) {
 	// 生成token
 	accessToken, err := genToken(request.Phone, 2)
 	if err != nil {
-		gutils.GinFail(c, 500, err.Error())
+		gk.GinFail(c, 500, err.Error())
 		return
 	}
 
 	// 保存token到redis
 	err = common.RD.Set(context.Background(), accessToken, "USER_ID", time.Hour*48).Err()
 	if err != nil {
-		gutils.GinFail(c, 500, err.Error())
+		gk.GinFail(c, 500, err.Error())
 		return
 	}
 
-	gutils.GinSuccess(c, 200, "注册成功", map[string]interface{}{
+	gk.GinSuccess(c, 200, "注册成功", map[string]interface{}{
 		"token": map[string]interface{}{
 			"token_type":   "Bearer",
 			"access_token": accessToken,
@@ -60,7 +60,7 @@ type LoginRequest struct {
 func Login(c *gin.Context) {
 	var request LoginRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		gutils.GinFail(c, 500, "param invalid: "+err.Error())
+		gk.GinFail(c, 500, "param invalid: "+err.Error())
 		return
 	}
 
@@ -69,18 +69,18 @@ func Login(c *gin.Context) {
 	// 生成token
 	accessToken, err := genToken(request.Phone, 2)
 	if err != nil {
-		gutils.GinFail(c, 500, err.Error())
+		gk.GinFail(c, 500, err.Error())
 		return
 	}
 
 	// 保存token到redis
 	err = common.RD.Set(context.Background(), accessToken, "USER_ID", time.Hour*48).Err()
 	if err != nil {
-		gutils.GinFail(c, 500, err.Error())
+		gk.GinFail(c, 500, err.Error())
 		return
 	}
 
-	gutils.GinSuccess(c, 200, "登录成功", map[string]interface{}{
+	gk.GinSuccess(c, 200, "登录成功", map[string]interface{}{
 		"token": map[string]interface{}{
 			"token_type":   "Bearer",
 			"access_token": accessToken,

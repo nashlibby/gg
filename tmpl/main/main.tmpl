@@ -8,7 +8,7 @@ import (
 	"{{.ModuleName}}/app/common"
 	"{{.ModuleName}}/app/middleware"
 	"{{.ModuleName}}/app/migrate"
-	"github.com/nashlibby/gutils"
+	"github.com/nashlibby/gk"
 )
 
 func main() {
@@ -54,7 +54,7 @@ func main() {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.CORS())
-	r.Use(gutils.LoggerToFile())
+	r.Use(gk.GinLogger())
 
 	// 路由分组
 	v1 := r.Group("api/v1")
