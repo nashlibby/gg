@@ -201,7 +201,7 @@ func (g *Generator) GenTransformer() {
 
 // 生成service
 func (g *Generator) GenService() {
-	g.ParseTemplate("service/service.tmpl", "app/service/"+gk.Camel2Case(g.Data.ModuleName)+".go")
+	g.ParseTemplate("service/service.tmpl", "app/internal/service/"+gk.Camel2Case(g.Data.ModuleName)+".go")
 }
 
 // 生成middleware
