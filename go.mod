@@ -3,12 +3,12 @@ module github.com/nashlibby/gg
 go 1.18
 
 require (
-	github.com/nashlibby/gk v0.0.1
+	github.com/nashlibby/gk v0.0.2
 	github.com/urfave/cli/v2 v2.11.2
 )
 
 require (
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1757 // indirect
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1761 // indirect
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.5+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect

@@ -64,7 +64,8 @@ func main() {
     r.Use(gin.Logger()){{end}}
 	r.Use(gin.Recovery())
 	r.Use(middleware.CORS())
-	r.Use(gk.GinLogger())
+
+	r.Use(gk.GinLogger({{if .UseSwagger}}"swagger"{{end}}))
 
 	{{if .UseSwagger}}
 	// swagger
