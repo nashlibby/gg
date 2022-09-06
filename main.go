@@ -47,6 +47,7 @@ func main() {
 					_ = exec.Command("bash", "-c", "go mod tidy").Run()
 					if cCtx.Bool("swagger") {
 						log.Println("Run: swag init")
+						_ = exec.Command("bash", "-c", "go install github.com/swaggo/swag/cmd/swag@latest").Run()
 						_ = exec.Command("bash", "-c", "swag init").Run()
 					}
 					return nil
@@ -79,6 +80,7 @@ func main() {
 					_ = exec.Command("bash", "-c", "go mod tidy").Run()
 					if cCtx.Bool("swagger") {
 						log.Println("Run: swag init")
+						_ = exec.Command("bash", "-c", "go install github.com/swaggo/swag/cmd/swag@latest").Run()
 						_ = exec.Command("bash", "-c", "swag init").Run()
 					}
 					return nil
@@ -107,6 +109,7 @@ func main() {
 					NewGenerator(data, cCtx.Bool("force")).GenApi("api")
 					if cCtx.Bool("swagger") {
 						log.Println("Run: swag init")
+						_ = exec.Command("bash", "-c", "go install github.com/swaggo/swag/cmd/swag@latest").Run()
 						_ = exec.Command("bash", "-c", "swag init").Run()
 					}
 					return nil
