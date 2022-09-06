@@ -12,7 +12,7 @@ import (
 // {{.ModuleText}}列表接口{{else}}
 // @Tags {{.ModuleText}}列表接口
 // @Router /{{.ModuleName}} [get]
-{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page query int false "页码"
 // @Param size query int false "每页数量"
 // @Produce json
@@ -42,7 +42,7 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 // {{.ModuleText}}详情接口{{else}}
 // @Tags {{.ModuleText}}详情接口
 // @Router /{{.ModuleName}}/:id [get]
-{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
 // @Produce json
 // @Success 200
@@ -68,7 +68,7 @@ type Create{{.ModuleName | FirstUpper}}Request struct {
 // 创建{{.ModuleText}}接口{{else}}
 // @Tags 创建{{.ModuleText}}接口
 // @Router /{{.ModuleName}} [post]
-{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @accept json
 // @Param request body Create{{.ModuleName | FirstUpper}}Request true "创建{{.ModuleText}}接口请求参数"
 // @Produce json
@@ -103,7 +103,7 @@ type Update{{.ModuleName | FirstUpper}}Request struct {
 // 更新{{.ModuleText}}接口{{else}}
 // @Tags 更新{{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [patch]
-{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
 // @accept json
 // @Param request body Update{{.ModuleName | FirstUpper}}Request true "更新{{.ModuleText}}接口请求参数"
@@ -141,7 +141,7 @@ func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 // 删除{{.ModuleText}}接口{{else}}
 // @Tags 删除{{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [delete]
-{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
 // @Produce json
 // @Success 200

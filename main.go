@@ -22,7 +22,7 @@ func main() {
 			{
 				Name:      "project",
 				Usage:     "Init project",
-				UsageText: "eg. gg project -a cms -t 内容管理系统 -p 8088 -f",
+				UsageText: "eg. gg project -a cms -t 内容管理系统 -p 8088 -s -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "port", Value: "8080", Aliases: []string{"p"}},
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
@@ -55,7 +55,7 @@ func main() {
 			{
 				Name:      "module",
 				Usage:     "Generate module code",
-				UsageText: "eg. gg module -a user -t 用户 -u -f",
+				UsageText: "eg. gg module -a user -t 用户 -u -s -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
@@ -87,7 +87,7 @@ func main() {
 			{
 				Name:      "api",
 				Usage:     "Generate api code",
-				UsageText: "gg api -a user -t 用户 -f",
+				UsageText: "gg api -a user -t 用户 -s -f",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
