@@ -23,6 +23,7 @@ type Data struct {
 	ModuleName string
 	ModuleText string
 	NeedAuth   bool
+	UseSwagger bool
 	ModelField ModelField
 }
 

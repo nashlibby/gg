@@ -28,6 +28,7 @@ func main() {
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
 					&cli.BoolFlag{Name: "force", Value: false, Aliases: []string{"f"}},
+					&cli.BoolFlag{Name: "swagger", Value: false, Aliases: []string{"s"}},
 				},
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.String("name") == "" {
@@ -39,10 +40,15 @@ func main() {
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
 						Port:       cCtx.String("port"),
+						UseSwagger: cCtx.Bool("swagger"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenProject()
 					log.Println("Run: go mod tidy")
 					_ = exec.Command("bash", "-c", "go mod tidy").Run()
+					if cCtx.Bool("swagger") {
+						log.Println("Run: swag init")
+						_ = exec.Command("bash", "-c", "swag init").Run()
+					}
 					return nil
 				},
 			},
@@ -55,6 +61,7 @@ func main() {
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
 					&cli.BoolFlag{Name: "force", Value: false, Aliases: []string{"f"}},
 					&cli.BoolFlag{Name: "auth", Value: false, Aliases: []string{"u"}},
+					&cli.BoolFlag{Name: "swagger", Value: false, Aliases: []string{"s"}},
 				},
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.String("name") == "" {
@@ -65,10 +72,15 @@ func main() {
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
 						NeedAuth:   cCtx.Bool("auth"),
+						UseSwagger: cCtx.Bool("swagger"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenModule()
 					log.Println("Run: go mod tidy")
 					_ = exec.Command("bash", "-c", "go mod tidy").Run()
+					if cCtx.Bool("swagger") {
+						log.Println("Run: swag init")
+						_ = exec.Command("bash", "-c", "swag init").Run()
+					}
 					return nil
 				},
 			},
@@ -80,6 +92,7 @@ func main() {
 					&cli.StringFlag{Name: "name", Aliases: []string{"a"}},
 					&cli.StringFlag{Name: "text", Aliases: []string{"t"}, DefaultText: ""},
 					&cli.BoolFlag{Name: "force", Value: false, Aliases: []string{"f"}},
+					&cli.BoolFlag{Name: "swagger", Value: false, Aliases: []string{"s"}},
 				},
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.String("name") == "" {
@@ -89,8 +102,13 @@ func main() {
 						ModuleType: "module",
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
+						UseSwagger: cCtx.Bool("swagger"),
 					}
 					NewGenerator(data, cCtx.Bool("force")).GenApi("api")
+					if cCtx.Bool("swagger") {
+						log.Println("Run: swag init")
+						_ = exec.Command("bash", "-c", "swag init").Run()
+					}
 					return nil
 				},
 			},

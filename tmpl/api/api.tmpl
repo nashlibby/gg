@@ -8,7 +8,16 @@ import (
 	"github.com/nashlibby/gk"
 )
 
-// {{.ModuleText}}列表接口
+{{if not .UseSwagger}}
+// {{.ModuleText}}列表接口{{else}}
+// @Tags {{.ModuleText}}列表接口
+// @Router /{{.ModuleName}} [get]
+{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param page query int false "页码"
+// @Param size query int false "每页数量"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	size, _ := strconv.Atoi(c.DefaultQuery("size", "15"))
@@ -29,7 +38,15 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 	})
 }
 
-// {{.ModuleText}}详情接口
+{{if not .UseSwagger}}
+// {{.ModuleText}}详情接口{{else}}
+// @Tags {{.ModuleText}}详情接口
+// @Router /{{.ModuleName}}/:id [get]
+{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param page path string true "id"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func {{.ModuleName | FirstUpper}}Show(c *gin.Context) {
 	id := c.Param("id")
 	{{.ModuleName}}Data, err := service.New{{.ModuleName | FirstUpper}}Service().FindById(id)
@@ -47,7 +64,16 @@ func {{.ModuleName | FirstUpper}}Show(c *gin.Context) {
 type Create{{.ModuleName | FirstUpper}}Request struct {
 }
 
-// 创建{{.ModuleText}}接口
+{{if not .UseSwagger}}
+// 创建{{.ModuleText}}接口{{else}}
+// @Tags 创建{{.ModuleText}}接口
+// @Router /{{.ModuleName}} [post]
+{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @accept json
+// @Param request body Create{{.ModuleName | FirstUpper}}Request true "创建{{.ModuleText}}接口请求参数"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func Create{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	var request Create{{.ModuleName | FirstUpper}}Request
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -73,7 +99,17 @@ func Create{{.ModuleName | FirstUpper}}(c *gin.Context) {
 type Update{{.ModuleName | FirstUpper}}Request struct {
 }
 
-// 更新{{.ModuleText}}接口
+{{if not .UseSwagger}}
+// 更新{{.ModuleText}}接口{{else}}
+// @Tags 更新{{.ModuleText}}接口
+// @Router /{{.ModuleName}}/:id [patch]
+{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param page path string true "id"
+// @accept json
+// @Param request body Update{{.ModuleName | FirstUpper}}Request true "更新{{.ModuleText}}接口请求参数"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	var request Update{{.ModuleName | FirstUpper}}Request
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -101,7 +137,15 @@ func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	})
 }
 
-// 删除{{.ModuleText}}接口
+{{if not .UseSwagger}}
+// 删除{{.ModuleText}}接口{{else}}
+// @Tags 删除{{.ModuleText}}接口
+// @Router /{{.ModuleName}}/:id [delete]
+{{if .NeedAuth}}// @Param Authorization header string true "Bearer {token}"{{end}}
+// @Param page path string true "id"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func Delete{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	id := c.Param("id")
     {{.ModuleName}}Service := service.New{{.ModuleName | FirstUpper}}Service()

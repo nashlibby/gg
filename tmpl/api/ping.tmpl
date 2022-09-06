@@ -7,7 +7,13 @@ import (
 	"time"
 )
 
-// 心跳
+{{if not .UseSwagger}}
+// 心跳接口{{else}}
+// @Tags 心跳接口
+// @Router /ping [get]
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func Ping(c *gin.Context) {
 	gk.GinSuccess(c, 200, "请求成功", map[string]string{
 		"status":    "up",

@@ -16,7 +16,15 @@ type RegisterRequest struct {
 	Captcha string `json:"captcha" binding:"required"`
 }
 
-// 注册
+{{if not .UseSwagger}}
+// 注册接口{{else}}
+// @Tags 注册接口
+// @Router /register [post]
+// @accept json
+// @Param request body RegisterRequest true "注册请求"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func Register(c *gin.Context) {
 	var request RegisterRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -56,7 +64,15 @@ type LoginRequest struct {
 	LoginType string `json:"login_type" binding:"required"`
 }
 
-// 登录
+{{if not .UseSwagger}}
+// 登录接口{{else}}
+// @Tags 登录接口
+// @Router /login [post]
+// @accept json
+// @Param request body LoginRequest true "登录请求"
+// @Produce json
+// @Success 200
+// @Failure 500{{end}}
 func Login(c *gin.Context) {
 	var request LoginRequest
 	if err := c.ShouldBindJSON(&request); err != nil {

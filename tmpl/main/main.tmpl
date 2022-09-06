@@ -9,6 +9,11 @@ import (
 	"{{.ModuleName}}/app/middleware"
 	"{{.ModuleName}}/app/migrate"
 	"github.com/nashlibby/gk"
+	{{if .UseSwagger}}
+    "{{.ModuleName}}/docs"
+    swaggerfiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+	{{end}}
 )
 
 func main() {
@@ -47,20 +52,36 @@ func main() {
     common.InitRedis(redisConfig)
 
 	// 启动api
-	r := gin.Default()
+	r := gin.New()
 	gin.SetMode(viper.GetString("app.mode"))
 
 	// 中间件
-	r.Use(gin.Logger())
+	{{if .UseSwagger}}
+    r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
+        SkipPaths: []string{"/swagger/index.html", "/swagger/doc.json", "/swagger/swagger-ui.css",
+            "/swagger/swagger-ui-bundle.js", "/swagger/swagger-ui-standalone-preset.js", "/swagger/favicon-32x32.png"},
+    })){{else}}
+    r.Use(gin.Logger()){{end}}
 	r.Use(gin.Recovery())
 	r.Use(middleware.CORS())
 	r.Use(gk.GinLogger())
+
+	{{if .UseSwagger}}
+	// swagger
+    docs.SwaggerInfo.Title = "gindow接口文档"
+    docs.SwaggerInfo.BasePath = "/api/v1"
+    r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+    {{end}}
 
 	// 路由分组
 	v1 := r.Group("api/v1")
 
 	// 心跳
 	v1.GET("ping", api.Ping)
+    // 注册
+    v1.POST("register", api.Register)
+    // 登录
+    v1.POST("login", api.Login)
 
 	// 添加路由
 
