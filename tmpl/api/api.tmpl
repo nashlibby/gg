@@ -10,7 +10,8 @@ import (
 
 {{if not .UseSwagger}}
 // {{.ModuleText}}列表接口{{else}}
-// @Tags {{.ModuleText}}列表接口
+// @Summary {{.ModuleText}}列表接口
+// @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}} [get]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page query int false "页码"
@@ -40,7 +41,8 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 
 {{if not .UseSwagger}}
 // {{.ModuleText}}详情接口{{else}}
-// @Tags {{.ModuleText}}详情接口
+// @Summary {{.ModuleText}}详情接口
+// @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [get]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
@@ -66,7 +68,8 @@ type Create{{.ModuleName | FirstUpper}}Request struct {
 
 {{if not .UseSwagger}}
 // 创建{{.ModuleText}}接口{{else}}
-// @Tags 创建{{.ModuleText}}接口
+// @Summary 创建{{.ModuleText}}接口
+// @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}} [post]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @accept json
@@ -101,7 +104,8 @@ type Update{{.ModuleName | FirstUpper}}Request struct {
 
 {{if not .UseSwagger}}
 // 更新{{.ModuleText}}接口{{else}}
-// @Tags 更新{{.ModuleText}}接口
+// @Summary 更新{{.ModuleText}}接口
+// @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [patch]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
@@ -139,7 +143,8 @@ func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 
 {{if not .UseSwagger}}
 // 删除{{.ModuleText}}接口{{else}}
-// @Tags 删除{{.ModuleText}}接口
+// @Summary 删除{{.ModuleText}}接口
+// @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [delete]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"

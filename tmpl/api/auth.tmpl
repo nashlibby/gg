@@ -18,7 +18,8 @@ type RegisterRequest struct {
 
 {{if not .UseSwagger}}
 // 注册接口{{else}}
-// @Tags 注册接口
+// @Summary 注册接口
+// @Tags 基础接口
 // @Router /register [post]
 // @accept json
 // @Param request body RegisterRequest true "注册请求"
@@ -66,7 +67,8 @@ type LoginRequest struct {
 
 {{if not .UseSwagger}}
 // 登录接口{{else}}
-// @Tags 登录接口
+// @Summary 登录接口
+// @Tags 基础接口
 // @Router /login [post]
 // @accept json
 // @Param request body LoginRequest true "登录请求"
