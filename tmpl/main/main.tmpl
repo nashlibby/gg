@@ -68,7 +68,7 @@ func main() {
 
 	{{if .UseSwagger}}
 	// swagger
-    docs.SwaggerInfo.Title = "gindow接口文档"
+    docs.SwaggerInfo.Title = "{{.AppName}}接口文档"
     docs.SwaggerInfo.BasePath = "/api/v1"
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
     {{end}}
