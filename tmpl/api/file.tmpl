@@ -1,0 +1,45 @@
+package api
+
+import (
+	"{{.AppName}}/app/common"
+	"github.com/gin-gonic/gin"
+	"github.com/nashlibby/gk"
+	"io/ioutil"
+)
+
+// @Summary 上传文件接口
+// @Tags 基础接口
+// @Router /upload_file [post]
+// @Param Authorization header string true "Bearer {token}"
+// @accept mpfd
+// @Param file formData file true "文件"
+// @Produce json
+// @Success 200
+// @Failure 500
+func UploadFile(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		gk.GinFail(c, 500, "param invalid: "+err.Error())
+		return
+	}
+	err = c.SaveUploadedFile(file, "/tmp/"+file.Filename)
+	if err != nil {
+		gk.GinFail(c, 500, "upload file error: "+err.Error())
+		return
+	}
+	f, err := ioutil.ReadFile("/tmp/" + file.Filename)
+	if err != nil {
+		gk.GinFail(c, 500, "read file error: "+err.Error())
+		return
+	}
+	ossUrl, err := common.Oss.UploadFile("upload/"+file.Filename, f)
+	if err != nil {
+		gk.GinFail(c, 500, "upload file to oss error: "+err.Error())
+		return
+	}
+
+	gk.GinSuccess(c, 200, "上传成功", map[string]interface{}{
+		"file_url": ossUrl,
+	})
+}
+

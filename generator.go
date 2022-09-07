@@ -122,6 +122,7 @@ func (g *Generator) GenProject() {
 	g.ParseTemplate("main/main.tmpl", "main.go")
 	g.GenApi("ping")
 	g.GenApi("auth")
+	g.GenApi("file")
 	g.GenCommon()
 	g.GenMiddleware("cors")
 	g.GenMiddleware("auth")
@@ -144,7 +145,7 @@ func (g *Generator) GenModule() {
 
 // 生成api
 func (g *Generator) GenApi(tmplName string) {
-	if tmplName == "ping" || tmplName == "auth" {
+	if tmplName == "ping" || tmplName == "auth" || tmplName == "file" {
 		g.ParseTemplate("api/"+tmplName+".tmpl", "app/api/"+tmplName+".go")
 	} else {
 		g.ParseTemplate("api/api.tmpl", "app/api/"+gk.Camel2Case(g.Data.ModuleName)+".go")
@@ -249,6 +250,8 @@ func (g *Generator) GenCommon() {
 	g.ParseTemplate("common/global.tmpl", "app/common/global.go")
 	g.ParseTemplate("common/mysql.tmpl", "app/common/mysql.go")
 	g.ParseTemplate("common/redis.tmpl", "app/common/redis.go")
+	g.ParseTemplate("common/oss.tmpl", "app/common/oss.go")
+	g.ParseTemplate("common/sms.tmpl", "app/common/sms.go")
 }
 
 // 生成migrate
@@ -326,6 +329,16 @@ redis:
   port: 6379
   password:
   db: 1
+oss:
+  name: 
+  endpoint: 
+  access_key: 
+  access_secret: 
+  bucket:
+sms:
+  name:
+  access_key:
+  access_secret:
 `, g.Data.ModuleName, g.Data.Port)), os.ModePerm)
 		log.Println("Generate file: ", "./config.yaml")
 	}

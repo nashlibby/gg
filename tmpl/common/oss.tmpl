@@ -1,0 +1,29 @@
+package common
+
+import "github.com/nashlibby/gk"
+
+type OssConfig struct {
+	Name         string `json:"name"`
+	Endpoint     string `json:"endpoint"`
+	AccessKey    string `json:"access_key"`
+	AccessSecret string `json:"access_secret"`
+	BucketName   string `json:"bucket_name"`
+	IsCname      bool   `json:"is_cname"`
+	Debug        bool   `json:"debug"`
+	Prefix       string `json:"prefix"`
+}
+
+func InitOss(config OssConfig) {
+	if config.Name == "aliyun" {
+		oss := gk.NewAliyunOss(gk.AliyunOssConfig{
+			Endpoint:     config.Endpoint,
+			AccessKey:    config.AccessKey,
+			AccessSecret: config.AccessSecret,
+			BucketName:   config.BucketName,
+			IsCname:      config.IsCname,
+			Debug:        config.Debug,
+			Prefix:       config.Prefix,
+		})
+		Oss = oss
+	}
+}

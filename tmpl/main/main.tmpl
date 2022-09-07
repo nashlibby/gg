@@ -42,6 +42,25 @@ func main() {
 		Db:       viper.GetInt("redis.db"),
 	}
 
+    // 获取oss配置
+    ossConfig := common.OssConfig{
+        Name:         viper.GetString("oss.name"),
+        Endpoint:     viper.GetString("oss.endpoint"),
+        AccessKey:    viper.GetString("oss.access_key"),
+        AccessSecret: viper.GetString("oss.access_secret"),
+        BucketName:   viper.GetString("oss.bucket"),
+        IsCname:      viper.GetBool("oss.is_cname"),
+        Debug:        viper.GetBool("oss.debug"),
+        Prefix:       viper.GetString("oss.prefix"),
+    }
+
+    // 获取sms配置
+    smsConfig := common.SmsConfig{
+        Name:         viper.GetString("sms.name"),
+        AccessKey:    viper.GetString("sms.access_key"),
+        AccessSecret: viper.GetString("sms.access_secret"),
+    }
+
 	// 初始化数据库
 	common.InitMysql(mysqlConfig)
 	// 数据迁移
@@ -50,6 +69,10 @@ func main() {
 	migrate.Seed()
     // 初始化redis
     common.InitRedis(redisConfig)
+    // 初始化oss
+    common.InitOss(ossConfig)
+    // 初始化sms
+    common.InitSms(smsConfig)
 
 	// 启动api
 	r := gin.New()
@@ -83,6 +106,10 @@ func main() {
     v1.POST("register", api.Register)
     // 登录
     v1.POST("login", api.Login)
+	// 发送验证码
+	v1.POST("send_captcha", api.SendCaptcha).Use(middleware.Auth())
+	// 上传文件
+	v1.POST("upload_file", api.UploadFile).Use(middleware.Auth())
 
 	// 添加路由
 
@@ -91,5 +118,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 }
+

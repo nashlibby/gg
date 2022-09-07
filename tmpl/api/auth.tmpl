@@ -107,6 +107,41 @@ func Login(c *gin.Context) {
 	})
 }
 
+// 发送验证码请求
+type SendCaptchaRequest struct {
+	Phone string `json:"phone" binding:"required"`
+}
+
+// @Summary 发送短信验证码接口
+// @Tags 基础接口
+// @Router /send_captcha [post]
+// @Param Authorization header string true "Bearer {token}"
+// @accept json
+// @Param request body SendCaptchaRequest true "发送验证码请求"
+// @Produce json
+// @Success 200
+// @Failure 500
+func SendCaptcha(c *gin.Context) {
+	var request SendCaptchaRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		gk.GinFail(c, 500, "param invalid: "+err.Error())
+		return
+	}
+
+	smsResponse, err := common.Sms.Send(request.Phone, "", "", "")
+	if err != nil {
+		gk.GinFail(c, 500, "param invalid: "+err.Error())
+		return
+	}
+
+	if smsResponse.Code != "OK" {
+		gk.GinFail(c, 500, "param invalid: "+smsResponse.Message)
+		return
+	}
+
+	gk.GinSuccess(c, 200, "发送成功", nil)
+}
+
 // 生成token
 func genToken(salt string, expiredDays int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
