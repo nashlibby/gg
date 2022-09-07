@@ -3,7 +3,7 @@ module github.com/nashlibby/gg
 go 1.18
 
 require (
-	github.com/nashlibby/gk v0.0.2
+	github.com/nashlibby/gk v0.0.3
 	github.com/urfave/cli/v2 v2.11.2
 )
 
