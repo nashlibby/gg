@@ -131,6 +131,7 @@ func (g *Generator) GenProject() {
 	g.GenConfig()
 	g.GenDeploy()
 	g.GenMakeFile()
+	g.GenDockerFile()
 }
 
 // 生成模块
@@ -375,5 +376,45 @@ deploy:
 	@./deploy.sh
 `, g.Data.ModuleName, g.Data.ModuleName)), os.ModePerm)
 		log.Println("Generate file: ", "./Makefile")
+	}
+}
+
+// 生成dockerfile
+func (g *Generator) GenDockerFile() {
+	if exist, _ := gk.FileExists("Dockerfile"); !exist || g.ForceMode {
+		_ = ioutil.WriteFile("Dockerfile", []byte(fmt.Sprintf(`FROM golang:1.18-alpine
+
+# 设置时区
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk add --update --no-cache \
+    tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo Asia/Shanghai > /etc/timezone \
+    && rm -f /var/cache/apk/*
+
+# 设定工作目录
+WORKDIR /workspace
+
+# 将当前目录下所有文件拷贝到/app
+COPY . .
+
+# 设置环境变量
+ENV GOPROXY https://goproxy.cn,direct
+
+# 打包编译删除源码
+RUN go mod tidy \
+    && env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/%s . \
+    && mv config.yaml /app/ \
+    && rm -rf *
+
+# 进入运行目录
+WORKDIR /app
+
+# 暴露端口
+EXPOSE %s
+
+# 容器启动执行脚本
+ENTRYPOINT ["./%s"]
+`, g.Data.ModuleName, g.Data.Port, g.Data.ModuleName)), os.ModePerm)
+		log.Println("Generate file: ", "./Dockerfile")
 	}
 }
