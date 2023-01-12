@@ -109,7 +109,7 @@ func main() {
 	// 发送验证码
 	v1.POST("send_captcha", api.SendCaptcha)
 	// 上传文件
-	v1.POST("upload_file", api.UploadFile).Use(middleware.Auth())
+	v1.POST("upload_file", api.UploadFile).Use(middleware.UserAuth())
 
 	// 添加路由
 
