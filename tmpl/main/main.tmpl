@@ -56,7 +56,7 @@ func main() {
 
     // 获取sms配置
     smsConfig := common.SmsConfig{
-        Name:         viper.GetString("sms.name"),
+        Gateway:      viper.GetString("sms.gateway"),
         AccessKey:    viper.GetString("sms.access_key"),
         AccessSecret: viper.GetString("sms.access_secret"),
     }

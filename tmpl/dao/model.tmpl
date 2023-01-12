@@ -10,27 +10,3 @@ type {{ .ModuleName | FirstUpper }} struct {
 	State           int8   `gorm:"type:tinyint(3);unsigned;default:1;comment:开启状态 10=关闭 1=开启" json:"state"`
 	gk.FieldTime `gorm:"embedded"`
 }
-
-func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) BeforeSave(tx *gorm.DB) (err error) {
-  return nil
-}
-
-func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) BeforeCreate(tx *gorm.DB) (err error) {
-  return nil
-}
-
-func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) AfterCreate(tx *gorm.DB) (err error) {
-  return nil
-}
-
-func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) BeforeUpdate(tx *gorm.DB) (err error) {
-  return nil
-}
-
-func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) AfterUpdate(tx *gorm.DB) (err error) {
-  return nil
-}
-
-func ({{ .ModuleName | FirstLetter }} *{{ .ModuleName | FirstUpper }}) AfterSave(tx *gorm.DB) (err error) {
-  return nil
-}

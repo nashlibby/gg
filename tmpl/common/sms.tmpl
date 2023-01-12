@@ -3,13 +3,13 @@ package common
 import "github.com/nashlibby/gk"
 
 type SmsConfig struct {
-	Name         string `json:"name"`
+	Gateway      string `json:"gateway"`
 	AccessKey    string `json:"access_key"`
 	AccessSecret string `json:"access_secret"`
 }
 
 func InitSms(config SmsConfig) {
-	if config.Name == "aliyun" {
+	if config.Gateway == "aliyun" {
 		sms := gk.NewAliyunSms(gk.AliyunSmsConfig{
 			AccessKey:    config.AccessKey,
 			AccessSecret: config.AccessSecret,
