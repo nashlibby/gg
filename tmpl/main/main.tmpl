@@ -107,7 +107,7 @@ func main() {
     // 登录
     v1.POST("login", api.Login)
 	// 发送验证码
-	v1.POST("send_captcha", api.SendCaptcha).Use(middleware.Auth())
+	v1.POST("send_captcha", api.SendCaptcha)
 	// 上传文件
 	v1.POST("upload_file", api.UploadFile).Use(middleware.Auth())
 

@@ -9,7 +9,7 @@ import (
 )
 
 // 鉴权中间件
-func Auth() gin.HandlerFunc {
+func UserAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := strings.Split(c.GetHeader("Authorization"), " ")
 		if len(authHeader) != 2 || authHeader[0] != "Bearer" {

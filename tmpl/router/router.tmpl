@@ -9,22 +9,35 @@ import (
 )
 
 // {{.ModuleText}}路由
-func {{.ModuleName | FirstUpper}}Router(r1 *gin.RouterGroup) {
+func {{.ModuleName | FirstUpper}}Router(r *gin.RouterGroup) {
+	r1 := r.Group("/admin/{{.ModuleName}}").Use(middleware.AdminAuth())
+	{
+		// 获取{{.ModuleText}}列表接口
+		r1.GET("", api.{{.ModuleName | FirstUpper}}Index)
+		// 获取{{.ModuleText}}详情接口
+		r1.GET("/:id", api.{{.ModuleName | FirstUpper}}Show)
+		// 创建{{.ModuleText}}接口
+		r1.POST("", api.Create{{.ModuleName | FirstUpper}})
+		// 更新{{.ModuleText}}接口
+		r1.PATCH("", api.Update{{.ModuleName | FirstUpper}})
+		// 删除{{.ModuleText}}接口
+		r1.DELETE("/:id", api.Delete{{.ModuleName | FirstUpper}})
+	}
     {{if .NeedAuth}}
-	r := r1.Group("/{{.ModuleName}}").Use(middleware.Auth())
+	r2 := r.Group("/{{.ModuleName}}").Use(middleware.UserAuth())
 	{{else}}
-    r := r1.Group("/{{.ModuleName}}")
+    r2 := r.Group("/{{.ModuleName}}")
 	{{end}}
 	{
 		// 获取{{.ModuleText}}列表接口
-		r.GET("", api.{{.ModuleName | FirstUpper}}Index)
+		r2.GET("", api.{{.ModuleName | FirstUpper}}Index)
 		// 获取{{.ModuleText}}详情接口
-		r.GET("/:id", api.{{.ModuleName | FirstUpper}}Show)
+		r2.GET("/:id", api.{{.ModuleName | FirstUpper}}Show)
 		// 创建{{.ModuleText}}接口
-		r.POST("", api.Create{{.ModuleName | FirstUpper}})
+		r2.POST("", api.Create{{.ModuleName | FirstUpper}})
 		// 更新{{.ModuleText}}接口
-		r.PATCH("", api.Update{{.ModuleName | FirstUpper}})
+		r2.PATCH("", api.Update{{.ModuleName | FirstUpper}})
 		// 删除{{.ModuleText}}接口
-		r.DELETE("/:id", api.Delete{{.ModuleName | FirstUpper}})
+		r2.DELETE("/:id", api.Delete{{.ModuleName | FirstUpper}})
 	}
 }
