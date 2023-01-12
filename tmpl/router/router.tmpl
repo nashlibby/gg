@@ -19,7 +19,7 @@ func {{.ModuleName | FirstUpper}}Router(r *gin.RouterGroup) {
 		// 创建{{.ModuleText}}接口
 		r1.POST("", api.Create{{.ModuleName | FirstUpper}})
 		// 更新{{.ModuleText}}接口
-		r1.PATCH("", api.Update{{.ModuleName | FirstUpper}})
+		r1.PATCH("/:id", api.Update{{.ModuleName | FirstUpper}})
 		// 删除{{.ModuleText}}接口
 		r1.DELETE("/:id", api.Delete{{.ModuleName | FirstUpper}})
 	}
@@ -36,7 +36,7 @@ func {{.ModuleName | FirstUpper}}Router(r *gin.RouterGroup) {
 		// 创建{{.ModuleText}}接口
 		r2.POST("", api.Create{{.ModuleName | FirstUpper}})
 		// 更新{{.ModuleText}}接口
-		r2.PATCH("", api.Update{{.ModuleName | FirstUpper}})
+		r2.PATCH("/:id", api.Update{{.ModuleName | FirstUpper}})
 		// 删除{{.ModuleText}}接口
 		r2.DELETE("/:id", api.Delete{{.ModuleName | FirstUpper}})
 	}
