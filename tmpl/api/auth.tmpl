@@ -1,12 +1,9 @@
 package api
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/nashlibby/gk"
-	"{{.AppName}}/app/common"
     "{{.AppName}}/app/internal/logic"
-	"time"
 )
 
 // 注册请求
@@ -76,7 +73,7 @@ func Login(c *gin.Context) {
 	}
 
     // 验证验证码
-    err = logic.NewCaptchaLogic().Verify(request.Phone, request.Captcha)
+    err := logic.NewCaptchaLogic().Verify(request.Phone, request.Password)
     if err != nil {
         gk.GinFail(c, 500, "验证码错误")
         return
