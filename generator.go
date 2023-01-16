@@ -127,6 +127,8 @@ func (g *Generator) GenProject() {
 	g.GenMiddleware("cors")
 	g.GenMiddleware("user_auth")
 	g.GenMiddleware("admin_auth")
+	g.GenLogic("auth")
+	g.GenLogic("captcha")
 	g.GenMigrate()
 	g.GenGitignore()
 	g.GenConfig()
@@ -237,8 +239,12 @@ func (g *Generator) GenRouter() {
 }
 
 // 生成logic
-func (g *Generator) GenLogic() {
-	g.ParseTemplate("logic/logic.tmpl", "app/internal/logic/"+gk.Camel2Case(g.Data.ModuleName)+".go")
+func (g *Generator) GenLogic(tmplName string) {
+	if tmplName == "blank" {
+		g.ParseTemplate("logic/logic.tmpl", "app/internal/logic/"+gk.Camel2Case(g.Data.ModuleName)+".go")
+	} else {
+		g.ParseTemplate("logic/"+tmplName+".tmpl", "app/internal/logic/"+tmplName+".go")
+	}
 }
 
 // 生成biz

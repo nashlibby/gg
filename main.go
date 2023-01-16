@@ -199,7 +199,7 @@ func main() {
 						ModuleName: cCtx.String("name"),
 						ModuleText: cCtx.String("text"),
 					}
-					NewGenerator(data, cCtx.Bool("force")).GenLogic()
+					NewGenerator(data, cCtx.Bool("force")).GenLogic("blank")
 					return nil
 				},
 			},
