@@ -13,6 +13,7 @@ import (
 // @Summary {{.ModuleText}}列表接口
 // @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}} [get]
+// @Router /admin/{{.ModuleName}} [get]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page query int false "页码"
 // @Param size query int false "每页数量"
@@ -44,6 +45,7 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 // @Summary {{.ModuleText}}详情接口
 // @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [get]
+// @Router /admin/{{.ModuleName}}/:id [get]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
 // @Produce json
@@ -71,6 +73,7 @@ type Create{{.ModuleName | FirstUpper}}Request struct {
 // @Summary 创建{{.ModuleText}}接口
 // @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}} [post]
+// @Router /admin/{{.ModuleName}} [post]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @accept json
 // @Param request body Create{{.ModuleName | FirstUpper}}Request true "创建{{.ModuleText}}接口请求参数"
@@ -107,6 +110,7 @@ type Update{{.ModuleName | FirstUpper}}Request struct {
 // @Summary 更新{{.ModuleText}}接口
 // @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [patch]
+// @Router /admin/{{.ModuleName}}/:id [patch]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
 // @accept json
@@ -146,6 +150,7 @@ func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 // @Summary 删除{{.ModuleText}}接口
 // @Tags {{.ModuleText}}接口
 // @Router /{{.ModuleName}}/:id [delete]
+// @Router /admin/{{.ModuleName}}/:id [delete]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
 // @Param page path string true "id"
 // @Produce json
