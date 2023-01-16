@@ -1,0 +1,41 @@
+package logic
+
+import (
+	"{{.AppName}}/app/common"
+	"context"
+	"github.com/dgrijalva/jwt-go"
+	"time"
+)
+
+type AuthLogic struct {
+}
+
+func NewAuthLogic() *AuthLogic {
+	return &AuthLogic{}
+}
+
+// 生成token
+func (a *AuthLogic) MakeToken(salt, identifier string, expiredDays int) (string, error) {
+	// 1.生成token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"iat": time.Now().Unix(),                            // 签发时间
+		"exp": time.Now().AddDate(0, 0, expiredDays).Unix(), // 到期时间
+	})
+	accessToken, err := token.SignedString([]byte(salt))
+	if err != nil {
+		return "", err
+	}
+
+	// 2.保存token
+	err = common.RD.Set(context.Background(), accessToken, identifier, time.Hour*24*(time.Duration(expiredDays))).Err()
+	if err != nil {
+		return "", err
+	}
+
+	return accessToken, nil
+}
+
+// 验证token
+func (a *AuthLogic) VerifyToken(token string) (string, error) {
+	return common.RD.Get(context.Background(), token).Result()
+}

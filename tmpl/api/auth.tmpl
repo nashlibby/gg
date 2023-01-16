@@ -2,10 +2,10 @@ package api
 
 import (
 	"context"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/nashlibby/gk"
 	"{{.AppName}}/app/common"
+    "{{.AppName}}/app/internal/logic"
 	"time"
 )
 
@@ -36,14 +36,7 @@ func Register(c *gin.Context) {
 	// TODO 注册逻辑
 
 	// 生成token
-	accessToken, err := genToken(request.Phone, 2)
-	if err != nil {
-		gk.GinFail(c, 500, err.Error())
-		return
-	}
-
-	// 保存token到redis
-	err = common.RD.Set(context.Background(), accessToken, "USER_ID", time.Hour*48).Err()
+	accessToken, err := logic.NewAuthLogic().MakeToken(request.Phone, "USER_ID", 2)
 	if err != nil {
 		gk.GinFail(c, 500, err.Error())
 		return
@@ -82,17 +75,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
+    // 验证验证码
+    err = logic.NewCaptchaLogic().Verify(request.Phone, request.Captcha)
+    if err != nil {
+        gk.GinFail(c, 500, "验证码错误")
+        return
+    }
+
 	// TODO 登录逻辑
 
 	// 生成token
-	accessToken, err := genToken(request.Phone, 2)
-	if err != nil {
-		gk.GinFail(c, 500, err.Error())
-		return
-	}
-
-	// 保存token到redis
-	err = common.RD.Set(context.Background(), accessToken, "USER_ID", time.Hour*48).Err()
+	accessToken, err := logic.NewAuthLogic().MakeToken(request.Phone, "USER_ID", 2)
 	if err != nil {
 		gk.GinFail(c, 500, err.Error())
 		return
@@ -127,30 +120,13 @@ func SendCaptcha(c *gin.Context) {
 		return
 	}
 
-	smsResponse, err := common.Sms.Send(request.Phone, "", "", "")
+	// 发送验证码
+	err := logic.NewCaptchaLogic().Send(request.Phone)
 	if err != nil {
-		gk.GinFail(c, 500, "param invalid: "+err.Error())
-		return
-	}
-
-	if smsResponse.Code != "OK" {
-		gk.GinFail(c, 500, "param invalid: "+smsResponse.Message)
+		gk.GinFail(c, 500, "验证码发送失败: "+err.Error())
 		return
 	}
 
 	gk.GinSuccess(c, 200, "发送成功", nil)
 }
 
-// 生成token
-func genToken(salt string, expiredDays int) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iat": time.Now().Unix(),                            // 签发时间
-		"exp": time.Now().AddDate(0, 0, expiredDays).Unix(), // 到期时间
-	})
-	accessToken, err := token.SignedString([]byte(salt))
-	if err != nil {
-		return "", err
-	} else {
-		return accessToken, nil
-	}
-}

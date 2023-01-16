@@ -1,0 +1,61 @@
+package logic
+
+import (
+	"{{.AppName}}/app/common"
+	"context"
+	"errors"
+	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
+)
+
+type CaptchaLogic struct {
+	Sign     string `json:"sign"`
+	Template string `json:"template"`
+}
+
+func NewCaptchaLogic() *CaptchaLogic {
+	return &CaptchaLogic{
+		Sign:     "",
+		Template: "",
+	}
+}
+
+// 发送验证码
+func (c *CaptchaLogic) Send(phone string) error {
+	// 1. 生成验证码
+	code := strconv.Itoa(100000 + rand.Intn(899999))
+
+	// 2. 发送验证码
+	smsResponse, err := common.Sms.Send(phone, c.Sign, c.Template, fmt.Sprintf(`{"code":%s}`, code))
+	if err != nil {
+		return err
+	}
+
+	if smsResponse.Code != "OK" {
+		return err
+	}
+
+	// 3. 保存验证码
+	err = common.RD.Set(context.Background(), "captcha_"+phone, code, 5*time.Minute).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 验证验证码
+func (c *CaptchaLogic) Verify(phone, code string) error {
+	data, err := common.RD.Get(context.Background(), "captcha_"+phone).Result()
+	if err != nil {
+		return err
+	}
+
+	if data != code {
+		return errors.New("captcha is invalid")
+	}
+
+	return nil
+}
