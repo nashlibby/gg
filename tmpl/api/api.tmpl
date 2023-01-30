@@ -34,8 +34,10 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 		return
 	}
 
+    tList, _ := transformer.New{{.ModuleName | FirstUpper}}Transformer().ToList({{.ModuleName}}List)
+
 	gk.GinSuccess(c, 200, "获取成功", map[string]interface{}{
-		"{{.ModuleName}}_list": {{.ModuleName}}List,
+		"{{.ModuleName}}_list": tList,
 		"paginate":     paginate,
 	})
 }
@@ -59,8 +61,10 @@ func {{.ModuleName | FirstUpper}}Show(c *gin.Context) {
 		return
 	}
 
+    tData, _ := transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
+
 	gk.GinSuccess(c, 200, "获取成功", map[string]interface{}{
-		"{{.ModuleName}}": {{.ModuleName}}Data,
+		"{{.ModuleName}}": tData,
 	})
 }
 
@@ -96,8 +100,10 @@ func Create{{.ModuleName | FirstUpper}}(c *gin.Context) {
     }
 
 	{{.ModuleName}}Data, _ := {{.ModuleName}}Service.FindById({{.ModuleName}}.Id)
+	tData, _ := transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
+
 	gk.GinSuccess(c, 200, "创建成功", map[string]interface{}{
-		"{{.ModuleName}}": {{.ModuleName}}Data,
+		"{{.ModuleName}}": tData,
 	})
 }
 
@@ -140,8 +146,10 @@ func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 	}
 
 	{{.ModuleName}}Data, _ := {{.ModuleName}}Service.FindById(id)
+    tData, _ := transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
+
 	gk.GinSuccess(c, 200, "更新成功", map[string]interface{}{
-		"{{.ModuleName}}": {{.ModuleName}}Data,
+		"{{.ModuleName}}": tData,
 	})
 }
 

@@ -18,48 +18,17 @@ func New{{.ModuleName | FirstUpper}}Service() *{{.ModuleName | FirstUpper}}Servi
 }
 
 // 根据id查找{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) FindById(id string) (tData *transformer.{{.ModuleName | FirstUpper}}Data, err error) {
-	{{.ModuleName}}Data, err := m.{{.ModuleName | FirstUpper}}Repository.Find("id = ?", []interface{}{id})
+func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) FindById(id string) (tData *model.{{.ModuleName | FirstUpper}}, err error) {
+	tData, err = m.{{.ModuleName | FirstUpper}}Repository.Find("id = ?", []interface{}{id})
 	if err != nil {
 		return
 	}
 
-	tData, _ = transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
 	return
-}
-
-// 查找{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) Find(query map[string]map[string]interface{}) (tData *transformer.{{.ModuleName | FirstUpper}}Data, err error) {
-	whereSql, values, _ := gk.WhereBuilder(query)
-	{{.ModuleName}}Data, err := m.{{.ModuleName | FirstUpper}}Repository.Find(whereSql, values)
-	if err != nil {
-		return
-	}
-
-	tData, _ = transformer.New{{.ModuleName | FirstUpper}}Transformer().ToData({{.ModuleName}}Data)
-	return
-}
-
-// 获取{{.ModuleText}}列表
-func (m *{{.ModuleName | FirstUpper}}Service) Get(query map[string]map[string]interface{}, {{.ModuleName}}By ...string) (tList []*transformer.{{.ModuleName | FirstUpper}}Data, err error) {
-	whereSql, values, _ := gk.WhereBuilder(query)
-	var ob string
-	if len({{.ModuleName}}By) > 0 {
-		ob = {{.ModuleName}}By[0]
-	} else {
-		ob = "created_at desc"
-	}
-
-	{{.ModuleName}}List, err := m.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, 0, 1000, ob)
-	if err != nil {
-		return
-	}
-
-	return transformer.New{{.ModuleName | FirstUpper}}Transformer().ToList({{.ModuleName}}List)
 }
 
 // 获取{{.ModuleText}}列表&&分页
-func (m *{{.ModuleName | FirstUpper}}Service) GetPaginate(query map[string]map[string]interface{}, page, perPage int64, {{.ModuleName}}By ...string) (tList []*transformer.{{.ModuleName | FirstUpper}}Data, paginate common.Paginate, err error) {
+func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) GetPaginate(query map[string]map[string]interface{}, page, perPage int64, {{.ModuleName}}By ...string) (tList []*model.{{.ModuleName | FirstUpper}}, paginate common.Paginate, err error) {
 	whereSql, values, _ := gk.WhereBuilder(query)
 	var ob string
 	if len({{.ModuleName}}By) > 0 {
@@ -67,7 +36,7 @@ func (m *{{.ModuleName | FirstUpper}}Service) GetPaginate(query map[string]map[s
 	} else {
 		ob = "created_at desc"
 	}
-	{{.ModuleName}}List, err := m.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, (page-1)*perPage, perPage, ob)
+	tList, err := m.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, (page-1)*perPage, perPage, ob)
 	if err != nil {
 		return
 	}
@@ -82,33 +51,20 @@ func (m *{{.ModuleName | FirstUpper}}Service) GetPaginate(query map[string]map[s
 		TotalPage:   int64(math.Ceil(float64(count) / float64(perPage))),
 	}
 
-	tList, _ = transformer.New{{.ModuleName | FirstUpper}}Transformer().ToList({{.ModuleName}}List)
 	return
 }
 
 // 创建{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) Create({{.ModuleName | FirstUpper}} *model.{{.ModuleName | FirstUpper}}) error {
+func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) Create({{.ModuleName | FirstUpper}} *model.{{.ModuleName | FirstUpper}}) error {
 	return m.{{.ModuleName | FirstUpper}}Repository.Create({{.ModuleName | FirstUpper}})
 }
 
 // 根据id更新{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) UpdateById(id string, data map[string]interface{}) error {
+func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) UpdateById(id string, data map[string]interface{}) error {
 	return m.{{.ModuleName | FirstUpper}}Repository.Update("id = ?", []interface{}{id}, data)
 }
 
-// 更新{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) Update(query map[string]map[string]interface{}, data map[string]interface{}) error {
-	whereSql, values, _ := gk.WhereBuilder(query)
-	return m.{{.ModuleName | FirstUpper}}Repository.Update(whereSql, values, data)
-}
-
 // 根据id删除{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) DeleteById(id string) error {
+func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) DeleteById(id string) error {
 	return m.{{.ModuleName | FirstUpper}}Repository.Delete("id = ?", []interface{}{id})
-}
-
-// 删除{{.ModuleText}}
-func (m *{{.ModuleName | FirstUpper}}Service) Delete(query map[string]map[string]interface{}) error {
-	whereSql, values, _ := gk.WhereBuilder(query)
-	return m.{{.ModuleName | FirstUpper}}Repository.Delete(whereSql, values)
 }
