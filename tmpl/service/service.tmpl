@@ -6,7 +6,6 @@ import (
 	"{{.AppName}}/app/common"
 	"{{.AppName}}/app/internal/dao/model"
 	"{{.AppName}}/app/internal/dao/repository"
-	"{{.AppName}}/app/internal/dao/transformer"
 )
 
 type {{.ModuleName | FirstUpper}}Service struct {
@@ -19,7 +18,7 @@ func New{{.ModuleName | FirstUpper}}Service() *{{.ModuleName | FirstUpper}}Servi
 
 // 根据id查找{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) FindById(id string) (tData *model.{{.ModuleName | FirstUpper}}, err error) {
-	tData, err = m.{{.ModuleName | FirstUpper}}Repository.Find("id = ?", []interface{}{id})
+	tData, err = {{.ModuleName | FirstLetter}}.{{.ModuleName | FirstUpper}}Repository.Find("id = ?", []interface{}{id})
 	if err != nil {
 		return
 	}
@@ -36,11 +35,11 @@ func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) GetPa
 	} else {
 		ob = "created_at desc"
 	}
-	tList, err := m.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, (page-1)*perPage, perPage, ob)
+	tList, err = {{.ModuleName | FirstLetter}}.{{.ModuleName | FirstUpper}}Repository.Get(whereSql, values, (page-1)*perPage, perPage, ob)
 	if err != nil {
 		return
 	}
-	count, err := m.{{.ModuleName | FirstUpper}}Repository.Count(whereSql, values)
+	count, err := {{.ModuleName | FirstLetter}}.{{.ModuleName | FirstUpper}}Repository.Count(whereSql, values)
 	if err != nil {
 		return
 	}
@@ -56,15 +55,15 @@ func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) GetPa
 
 // 创建{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) Create({{.ModuleName | FirstUpper}} *model.{{.ModuleName | FirstUpper}}) error {
-	return m.{{.ModuleName | FirstUpper}}Repository.Create({{.ModuleName | FirstUpper}})
+	return {{.ModuleName | FirstLetter}}.{{.ModuleName | FirstUpper}}Repository.Create({{.ModuleName | FirstUpper}})
 }
 
 // 根据id更新{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) UpdateById(id string, data map[string]interface{}) error {
-	return m.{{.ModuleName | FirstUpper}}Repository.Update("id = ?", []interface{}{id}, data)
+	return {{.ModuleName | FirstLetter}}.{{.ModuleName | FirstUpper}}Repository.Update("id = ?", []interface{}{id}, data)
 }
 
 // 根据id删除{{.ModuleText}}
 func ({{.ModuleName | FirstLetter}}  *{{.ModuleName | FirstUpper}}Service) DeleteById(id string) error {
-	return m.{{.ModuleName | FirstUpper}}Repository.Delete("id = ?", []interface{}{id})
+	return {{.ModuleName | FirstLetter}}.{{.ModuleName | FirstUpper}}Repository.Delete("id = ?", []interface{}{id})
 }

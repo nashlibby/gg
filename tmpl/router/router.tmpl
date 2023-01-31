@@ -24,8 +24,7 @@ func {{.ModuleName | FirstUpper}}Router(r *gin.RouterGroup) {
 		r1.DELETE("/:id", api.Delete{{.ModuleName | FirstUpper}})
 	}
     {{if .NeedAuth}}
-	r2 := r.Group("/{{.ModuleName}}").Use(middleware.UserAuth())
-	{{else}}
+	r2 := r.Group("/{{.ModuleName}}").Use(middleware.UserAuth()){{else}}
     r2 := r.Group("/{{.ModuleName}}")
 	{{end}}
 	{
