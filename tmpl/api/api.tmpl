@@ -50,7 +50,7 @@ func {{.ModuleName | FirstUpper}}Index(c *gin.Context) {
 // @Router /{{.ModuleName}}/:id [get]
 // @Router /admin/{{.ModuleName}}/:id [get]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
-// @Param page path string true "id"
+// @Param id path string true "id"
 // @Produce json
 // @Success 200
 // @Failure 500{{end}}
@@ -119,7 +119,7 @@ type Update{{.ModuleName | FirstUpper}}Request struct {
 // @Router /{{.ModuleName}}/:id [patch]
 // @Router /admin/{{.ModuleName}}/:id [patch]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
-// @Param page path string true "id"
+// @Param id path string true "id"
 // @accept json
 // @Param request body Update{{.ModuleName | FirstUpper}}Request true "更新{{.ModuleText}}接口请求参数"
 // @Produce json
@@ -161,7 +161,7 @@ func Update{{.ModuleName | FirstUpper}}(c *gin.Context) {
 // @Router /{{.ModuleName}}/:id [delete]
 // @Router /admin/{{.ModuleName}}/:id [delete]
 // @Param Authorization header string {{if .NeedAuth}}true{{else}}false{{end}} "Bearer {token}"
-// @Param page path string true "id"
+// @Param id path string true "id"
 // @Produce json
 // @Success 200
 // @Failure 500{{end}}
